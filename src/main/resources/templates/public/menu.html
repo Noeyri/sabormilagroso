@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Menú')}"></head>
+<body class="bg-background text-on-background font-body-md antialiased min-h-screen flex flex-col">
+
+<header th:replace="~{fragments/header :: header('menu')}"></header>
+
+<main class="flex-grow page-content pb-24">
+
+    <section class="px-margin-mobile md:px-margin-desktop py-12 max-w-container-max mx-auto flex flex-col items-center text-center">
+        <h1 class="font-headline-xl text-headline-xl text-primary mb-4">Nuestro menú</h1>
+        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+            Descubre la auténtica esencia del Perú a través de nuestros platillos, preparados con pasión e
+            ingredientes tradicionales.
+        </p>
+    </section>
+
+    <!-- Buscador y filtros (visual, sin lógica de backend aún) -->
+    <section class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto mb-10">
+        <div class="bg-surface/90 border border-outline-variant p-4 rounded-xl shadow-sm flex flex-col xl:flex-row gap-4 items-center justify-between">
+            <div class="relative w-full xl:w-80">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+                <input class="w-full pl-12 pr-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-body-md text-on-surface outline-none transition-all" placeholder="Buscar platillos, ingredientes..." type="text"/>
+            </div>
+            <div class="w-full xl:flex-1 overflow-x-auto scrollbar-hide">
+                <div class="flex gap-2 min-w-max pb-1">
+                    <button class="px-4 py-2 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md shadow-sm">Todos</button>
+                    <button th:each="cat : ${categorias}" class="px-4 py-2 rounded-full bg-surface-container-lowest border border-outline-variant text-on-surface-variant hover:bg-secondary-container hover:text-on-secondary-container hover:border-transparent font-label-md text-label-md transition-all" th:text="${cat}">Categoría</button>
+                </div>
+            </div>
+            <div class="flex gap-3 w-full xl:w-auto">
+                <div class="relative flex-1 xl:w-44">
+                    <select class="w-full appearance-none pl-4 pr-10 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest font-label-md text-label-md text-on-surface cursor-pointer outline-none">
+                        <option>Ordenar por: Relevancia</option>
+                        <option>Menor precio</option>
+                        <option>Mayor precio</option>
+                        <option>Más populares</option>
+                    </select>
+                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Grilla de productos -->
+    <section class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
+            <article th:each="p : ${productos}" class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col group border border-surface-container-highest">
+                <div class="h-56 relative overflow-hidden bg-surface-container-low">
+                    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" th:src="${p.imagenUrl}" th:alt="${p.nombre}"/>
+                    <div class="absolute top-4 left-4 flex gap-2">
+                        <span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-sm text-label-sm shadow-sm" th:text="${p.categoria}">Categoría</span>
+                        <span th:if="${p.popular}" class="bg-primary text-on-primary px-3 py-1 rounded-full font-label-sm text-label-sm shadow-sm flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[14px]">star</span> Popular
+                        </span>
+                    </div>
+                </div>
+                <div class="p-6 flex flex-col flex-grow">
+                    <h3 class="font-headline-sm text-headline-sm text-on-surface mb-2 leading-tight" th:text="${p.nombre}">Nombre</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant mb-6 flex-grow line-clamp-3" th:text="${p.descripcion}">Descripción</p>
+                    <div class="flex items-end justify-between mb-6">
+                        <div class="flex flex-col">
+                            <span th:if="${p.enPromocion}" class="font-label-sm text-label-sm text-on-surface-variant line-through opacity-70" th:text="'S/ ' + ${#numbers.formatDecimal(p.precioAnterior, 1, 2)}">S/ 0.00</span>
+                            <span class="font-headline-sm text-headline-sm text-primary font-bold" th:text="'S/ ' + ${#numbers.formatDecimal(p.precio, 1, 2)}">S/ 0.00</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 mt-auto">
+                        <button type="button" class="flex-grow bg-primary text-on-primary py-3 rounded-lg font-label-md text-label-md hover:bg-hover-orange transition-colors duration-300 flex items-center justify-center gap-2 shadow-sm" onclick="showToast('Agregado al pedido (modo demostración).')">
+                            <span class="material-symbols-outlined text-[20px]">add_shopping_cart</span> Agregar
+                        </button>
+                        <a th:href="@{/producto/{id}(id=${p.id})}" aria-label="Ver detalles" class="p-3 border border-outline-variant rounded-lg text-secondary hover:bg-secondary-container hover:text-on-secondary-container hover:border-transparent transition-all duration-300 flex items-center justify-center">
+                            <span class="material-symbols-outlined">visibility</span>
+                        </a>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

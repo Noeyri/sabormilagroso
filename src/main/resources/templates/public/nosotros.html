@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Nosotros')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+
+<header th:replace="~{fragments/header :: header('nosotros')}"></header>
+
+<main class="flex-grow page-content pb-24 space-y-24">
+
+    <!-- Hero -->
+    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pt-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <div class="space-y-6">
+                <h1 class="font-headline-xl text-headline-xl text-on-surface">Nuestra historia</h1>
+                <p class="font-body-lg text-body-lg text-on-surface-variant">
+                    Sabor Milagroso nació de la pasión por compartir la riqueza culinaria del Perú: costa, sierra y
+                    selva reunidas en una misma mesa.
+                </p>
+                <p class="font-body-md text-body-md text-on-surface-variant">
+                    Desde nuestros inicios, trabajamos con productores locales para garantizar ingredientes frescos
+                    y auténticos, combinando recetas tradicionales con técnicas modernas de cocina.
+                </p>
+            </div>
+            <div class="relative h-[320px] md:h-[420px] rounded-2xl overflow-hidden shadow-sm">
+                <img class="w-full h-full object-cover" alt="Equipo de cocina de Sabor Milagroso"
+                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuAt2s_4QHzgwPGtS3rS-gRxn4Fr2oPiaRcUy_ex1mGbiEDggHpYWPZiGOpMoojX-KkIN_xzlXwF5vlIDZ6PlKbNYWAFpm5LQ2GOngGvp2Hy6FzJbC4M2rbEYBHyL9IJ7Sn4-1MxO01FbzH49emqayVi6sOsLfCip6e-Ov9aH4LPWz30IwQDig4e-nOIf60UVaC6ao5x5SQ0PbmZ7WCZvlUhM7wqLoNSwNDdDnMr8nJPGw9TCB1AWxwd"/>
+            </div>
+        </div>
+    </section>
+
+    <!-- Valores -->
+    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+        <h2 class="font-headline-md text-headline-md text-on-surface text-center mb-12">Nuestros valores</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white p-8 rounded-xl border border-surface-variant text-center space-y-4">
+                <span class="material-symbols-outlined text-primary text-[40px]">eco</span>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface">Ingredientes frescos</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant">Seleccionamos productos de temporada y proveedores locales de confianza.</p>
+            </div>
+            <div class="bg-white p-8 rounded-xl border border-surface-variant text-center space-y-4">
+                <span class="material-symbols-outlined text-primary text-[40px]">favorite</span>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface">Pasión por la cocina</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant">Cada plato refleja nuestro cariño por la tradición culinaria peruana.</p>
+            </div>
+            <div class="bg-white p-8 rounded-xl border border-surface-variant text-center space-y-4">
+                <span class="material-symbols-outlined text-primary text-[40px]">groups</span>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface">Cercanía con el cliente</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant">Buscamos que cada visita se sienta como una experiencia familiar.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop bg-surface-container py-16 rounded-2xl text-center">
+        <h2 class="font-headline-md text-headline-md text-on-surface mb-4">¿Listo para vivir la experiencia?</h2>
+        <a th:href="@{/menu}" class="inline-block bg-primary text-on-primary font-label-md text-label-md px-8 py-4 rounded-full shadow-sm hover:bg-hover-orange transition-colors duration-300">
+            Explorar el menú
+        </a>
+    </section>
+
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

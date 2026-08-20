@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<footer th:fragment="footer" class="w-full py-12 px-margin-mobile md:px-margin-desktop bg-surface-container-highest border-t border-outline-variant">
+    <div class="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div>
+            <img th:src="@{/img/logo_SaborMilagroso_sinFondo.png}"
+                alt="Sabor Milagroso" class="h-12 w-auto object-contain mb-3"/>
+            <p class="font-body-md text-body-md text-on-surface-variant">El verdadero sabor del Perú, en cada plato.</p>
+        </div>
+        <div>
+            <h4 class="font-label-md text-label-md text-on-surface mb-3">Navegación</h4>
+            <ul class="space-y-2">
+                <li><a th:href="@{/menu}" class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors">Menú</a></li>
+                <li><a th:href="@{/promociones}" class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors">Promociones</a></li>
+                <li><a th:href="@{/nosotros}" class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors">Nosotros</a></li>
+                <li><a th:href="@{/contacto}" class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors">Contacto</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 class="font-label-md text-label-md text-on-surface mb-3">Cuenta</h4>
+            <ul class="space-y-2">
+                <li><a th:href="@{/login}" class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors">Iniciar sesión</a></li>
+                <li><a th:href="@{/registro}" class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors">Crear cuenta</a></li>
+                <li><a th:href="@{/recuperar-password}" class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors">Recuperar contraseña</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 class="font-label-md text-label-md text-on-surface mb-3">Contáctanos</h4>
+            <p class="font-body-md text-body-md text-on-surface-variant">Av. La Molina 123, Lima</p>
+            <p class="font-body-md text-body-md text-on-surface-variant">+51 987 654 321</p>
+        </div>
+    </div>
+    <div class="max-w-container-max mx-auto mt-10 pt-6 border-t border-outline-variant font-label-sm text-label-sm text-on-surface-variant text-center">
+        © 2026 Sabor Milagroso. Todos los derechos reservados.
+    </div>
+</footer>
+</body>
+</html>

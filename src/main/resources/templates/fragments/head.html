@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(titulo)">
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title th:text="${titulo} + ' | Sabor Milagroso'">Sabor Milagroso</title>
+
+    <!-- Fuentes: EB Garamond (headlines) + Hanken Grotesk (body) + Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script th:src="@{/js/tailwind-config.js}"></script>
+
+    <!-- Estilos y comportamiento propios del proyecto -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+    <script th:src="@{/js/main.js}" defer="defer"></script>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="header(activo)" class="fixed top-0 w-full z-50 bg-surface shadow-sm">
+    <div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+        <!-- Marca -->
+        <a href="/" class="flex items-center">
+            <img th:src="@{/img/logo_SaborMilagroso_sinFondo.png}"
+                alt="Sabor Milagroso" class="h-12 md:h-14 w-auto object-contain"/>
+        </a>
+
+        <!-- Navegación desktop -->
+        <nav class="hidden md:block">
+            <ul class="flex items-center space-x-8">
+                <li><a th:href="@{/}" th:classappend="${activo == 'inicio'} ? 'active' : ''"
+                       class="nav-link font-label-md text-label-md text-on-surface-variant hover:text-primary transition-all duration-300 px-3 py-2 rounded">Inicio</a></li>
+                <li><a th:href="@{/menu}" th:classappend="${activo == 'menu'} ? 'active' : ''"
+                       class="nav-link font-label-md text-label-md text-on-surface-variant hover:text-primary transition-all duration-300 px-3 py-2 rounded">Menú</a></li>
+                <li><a th:href="@{/promociones}" th:classappend="${activo == 'promociones'} ? 'active' : ''"
+                       class="nav-link font-label-md text-label-md text-on-surface-variant hover:text-primary transition-all duration-300 px-3 py-2 rounded">Promociones</a></li>
+                <li><a th:href="@{/nosotros}" th:classappend="${activo == 'nosotros'} ? 'active' : ''"
+                       class="nav-link font-label-md text-label-md text-on-surface-variant hover:text-primary transition-all duration-300 px-3 py-2 rounded">Nosotros</a></li>
+                <li><a th:href="@{/contacto}" th:classappend="${activo == 'contacto'} ? 'active' : ''"
+                       class="nav-link font-label-md text-label-md text-on-surface-variant hover:text-primary transition-all duration-300 px-3 py-2 rounded">Contacto</a></li>
+            </ul>
+        </nav>
+
+        <!-- Acciones -->
+        <div class="flex items-center space-x-2 md:space-x-4">
+            <a th:href="@{/login}" class="hidden md:block font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors px-3 py-2">Iniciar sesión</a>
+            <a th:href="@{/registro}" class="hidden md:block bg-primary text-on-primary font-label-md text-label-md px-5 py-2 rounded-full hover:bg-hover-orange transition-colors">Crear cuenta</a>
+            <button aria-label="Carrito" class="text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all p-2 rounded-full flex items-center justify-center">
+                <span class="material-symbols-outlined">shopping_cart</span>
+            </button>
+            <!-- Botón menú móvil -->
+            <button id="mobile-menu-toggle" aria-label="Abrir menú" class="md:hidden text-on-surface-variant hover:text-primary p-2 rounded-full flex items-center justify-center">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Menú móvil desplegable -->
+    <div id="mobile-menu" class="md:hidden border-t border-outline-variant bg-surface px-margin-mobile py-4 space-y-3">
+        <a th:href="@{/}" class="block font-label-md text-label-md text-on-surface-variant hover:text-primary py-2">Inicio</a>
+        <a th:href="@{/menu}" class="block font-label-md text-label-md text-on-surface-variant hover:text-primary py-2">Menú</a>
+        <a th:href="@{/promociones}" class="block font-label-md text-label-md text-on-surface-variant hover:text-primary py-2">Promociones</a>
+        <a th:href="@{/nosotros}" class="block font-label-md text-label-md text-on-surface-variant hover:text-primary py-2">Nosotros</a>
+        <a th:href="@{/contacto}" class="block font-label-md text-label-md text-on-surface-variant hover:text-primary py-2">Contacto</a>
+        <hr class="border-outline-variant"/>
+        <a th:href="@{/login}" class="block font-label-md text-label-md text-primary py-2">Iniciar sesión</a>
+        <a th:href="@{/registro}" class="block bg-primary text-on-primary text-center font-label-md text-label-md px-5 py-2 rounded-full">Crear cuenta</a>
+    </div>
+</header>
+</body>
+</html>

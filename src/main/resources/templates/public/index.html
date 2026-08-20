@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Inicio')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+
+<header th:replace="~{fragments/header :: header('inicio')}"></header>
+
+<main class="flex-grow page-content pb-24 space-y-24">
+
+    <!-- Hero -->
+    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+        <div class="relative w-full h-[420px] md:h-[600px] rounded-xl overflow-hidden shadow-sm">
+            <div class="absolute inset-0 bg-cover bg-center"
+                 style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBrVJxyv2HNNPCqUaAHabY4hyYqjsib5kd_1X9qKr-esgvqSbj3h0D7qjBGZeIPwTOScYEx8jXWq2BrtKDMADBKCAG2cHyMXKQf4mc1pPfnbU1OBV7rhw9RQjqqOHc4giq6xl8COF6olUW7i52oZ-0e9sC3dZ7oYZ5MBjSU-BjJ6wNpPD6hzapZTinzQZ77eIsXEl4chk30pfqe2WcX8rTxbB5Dm9-6x--66DvT7MHSC7dIl6Q_iuzZ');"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-on-background/80 to-transparent"></div>
+            <div class="relative h-full flex flex-col justify-center max-w-2xl px-8 md:px-16 text-white space-y-6">
+                <h1 class="font-headline-lg-mobile md:font-headline-xl text-headline-lg-mobile md:text-headline-xl text-white">El verdadero sabor del Perú</h1>
+                <p class="font-body-lg text-body-lg text-surface-container-high opacity-90 max-w-lg">
+                    Descubre la auténtica fusión de la costa, sierra y selva en cada bocado. Ingredientes frescos,
+                    recetas tradicionales y un toque moderno en tu mesa.
+                </p>
+                <div>
+                    <a th:href="@{/menu}" class="inline-block bg-primary text-on-primary font-label-md text-label-md px-8 py-4 rounded-full shadow-sm hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+                        Ver menú
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nuestros favoritos -->
+    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+        <div class="flex items-end justify-between mb-12">
+            <div>
+                <h2 class="font-headline-md text-headline-md text-on-surface">Nuestros favoritos</h2>
+                <p class="font-body-md text-body-md text-on-surface-variant mt-2">Los platos más aclamados por nuestros comensales.</p>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div th:each="p : ${destacados}" class="bg-white rounded-xl shadow-sm overflow-hidden hover:-translate-y-2 hover:shadow-md transition-all duration-300 group border border-surface-variant">
+                <div class="h-64 w-full relative overflow-hidden">
+                    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" th:src="${p.imagenUrl}" th:alt="${p.nombre}"/>
+                    <div th:if="${p.recomendado}" class="absolute top-4 left-4 bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full font-label-sm text-label-sm">Recomendado</div>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div class="flex justify-between items-start">
+                        <h3 class="font-headline-sm text-headline-sm text-on-surface" th:text="${p.nombre}">Plato</h3>
+                        <span class="font-label-md text-label-md text-on-primary-fixed bg-primary-fixed px-2 py-1 rounded" th:text="'S/ ' + ${#numbers.formatDecimal(p.precio, 1, 2)}">S/ 0.00</span>
+                    </div>
+                    <p class="font-body-md text-body-md text-on-surface-variant line-clamp-2" th:text="${p.descripcion}">Descripción</p>
+                    <a th:href="@{/producto/{id}(id=${p.id})}" class="text-primary font-label-md text-label-md flex items-center group-hover:text-hover-orange transition-colors">
+                        Ver detalle <span class="material-symbols-outlined ml-1 text-[18px]">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categorías populares -->
+    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop bg-surface-container py-16 rounded-2xl">
+        <div class="text-center mb-12">
+            <h2 class="font-headline-md text-headline-md text-on-surface">Explora nuestro menú</h2>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+            <a th:href="@{/menu}" class="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-transparent hover:border-primary-fixed">
+                <span class="material-symbols-outlined text-[40px] text-tertiary">local_dining</span>
+                <span class="font-label-md text-label-md text-on-surface mt-3">Criollos</span>
+            </a>
+            <a th:href="@{/menu}" class="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-transparent hover:border-primary-fixed">
+                <span class="material-symbols-outlined text-[40px] text-tertiary">set_meal</span>
+                <span class="font-label-md text-label-md text-on-surface mt-3">Ceviches</span>
+            </a>
+            <a th:href="@{/menu}" class="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-transparent hover:border-primary-fixed">
+                <span class="material-symbols-outlined text-[40px] text-tertiary">outdoor_grill</span>
+                <span class="font-label-md text-label-md text-on-surface mt-3">Parrillas</span>
+            </a>
+            <a th:href="@{/menu}" class="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-transparent hover:border-primary-fixed">
+                <span class="material-symbols-outlined text-[40px] text-tertiary">fastfood</span>
+                <span class="font-label-md text-label-md text-on-surface mt-3">Pollo a la brasa</span>
+            </a>
+            <a th:href="@{/menu}" class="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-transparent hover:border-primary-fixed">
+                <span class="material-symbols-outlined text-[40px] text-tertiary">icecream</span>
+                <span class="font-label-md text-label-md text-on-surface mt-3">Postres</span>
+            </a>
+            <a th:href="@{/menu}" class="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-transparent hover:border-primary-fixed">
+                <span class="material-symbols-outlined text-[40px] text-tertiary">local_bar</span>
+                <span class="font-label-md text-label-md text-on-surface mt-3">Bebidas</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Sobre nosotros -->
+    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <div class="space-y-6">
+                <h2 class="font-headline-xl text-headline-xl text-on-surface">Tradición y pasión en cada detalle</h2>
+                <p class="font-body-lg text-body-lg text-on-surface-variant">
+                    En Sabor Milagroso, no solo servimos comida; compartimos nuestra historia. Nacimos de la pasión
+                    por los sabores intensos y la rica herencia culinaria de nuestro país.
+                </p>
+                <div class="pt-4">
+                    <a th:href="@{/nosotros}" class="inline-block border-2 border-outline text-on-surface font-label-md text-label-md px-6 py-3 rounded-full hover:bg-surface-container-high transition-colors duration-300">
+                        Conoce nuestra historia
+                    </a>
+                </div>
+            </div>
+            <div class="relative h-[320px] md:h-[500px] rounded-2xl overflow-hidden shadow-sm">
+                <img class="w-full h-full object-cover" alt="Cocina de Sabor Milagroso"
+                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuAt2s_4QHzgwPGtS3rS-gRxn4Fr2oPiaRcUy_ex1mGbiEDggHpYWPZiGOpMoojX-KkIN_xzlXwF5vlIDZ6PlKbNYWAFpm5LQ2GOngGvp2Hy6FzJbC4M2rbEYBHyL9IJ7Sn4-1MxO01FbzH49emqayVi6sOsLfCip6e-Ov9aH4LPWz30IwQDig4e-nOIf60UVaC6ao5x5SQ0PbmZ7WCZvlUhM7wqLoNSwNDdDnMr8nJPGw9TCB1AWxwd"/>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

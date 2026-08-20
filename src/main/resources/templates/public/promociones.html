@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Promociones')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+
+<header th:replace="~{fragments/header :: header('promociones')}"></header>
+
+<main class="flex-grow page-content pb-24">
+
+    <section class="px-margin-mobile md:px-margin-desktop py-12 max-w-container-max mx-auto text-center">
+        <span class="material-symbols-outlined text-primary text-[48px] mb-2">local_offer</span>
+        <h1 class="font-headline-xl text-headline-xl text-primary mb-4">Promociones del momento</h1>
+        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">
+            Aprovecha nuestras ofertas especiales y disfruta el sabor peruano a un mejor precio.
+        </p>
+    </section>
+
+    <section class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto pb-24">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8" th:if="${promociones != null and !promociones.isEmpty()}">
+            <article th:each="p : ${promociones}" class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col md:flex-row border border-surface-variant">
+                <div class="md:w-1/2 h-56 md:h-auto relative overflow-hidden">
+                    <img class="w-full h-full object-cover" th:src="${p.imagenUrl}" th:alt="${p.nombre}"/>
+                    <div class="absolute top-4 left-4 bg-error text-on-error px-3 py-1 rounded-full font-label-sm text-label-sm">Oferta</div>
+                </div>
+                <div class="p-6 md:w-1/2 flex flex-col justify-center space-y-4">
+                    <h3 class="font-headline-sm text-headline-sm text-on-surface" th:text="${p.nombre}">Plato</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant line-clamp-3" th:text="${p.descripcion}">Descripción</p>
+                    <div class="flex items-end gap-3">
+                        <span class="font-label-md text-label-md text-on-surface-variant line-through opacity-70" th:text="'S/ ' + ${#numbers.formatDecimal(p.precioAnterior, 1, 2)}">S/ 0.00</span>
+                        <span class="font-headline-sm text-headline-sm text-primary font-bold" th:text="'S/ ' + ${#numbers.formatDecimal(p.precio, 1, 2)}">S/ 0.00</span>
+                    </div>
+                    <a th:href="@{/producto/{id}(id=${p.id})}" class="inline-flex items-center gap-2 text-primary font-label-md text-label-md hover:text-hover-orange transition-colors w-fit">
+                        Ver detalle <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                    </a>
+                </div>
+            </article>
+        </div>
+
+        <div th:if="${promociones == null or promociones.isEmpty()}" class="text-center py-16">
+            <p class="font-body-lg text-body-lg text-on-surface-variant">Por el momento no hay promociones activas. ¡Vuelve pronto!</p>
+        </div>
+    </section>
+
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

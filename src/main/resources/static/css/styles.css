@@ -1,0 +1,48 @@
+/* Sabor Milagroso - Estilos globales del área pública (Fase 1) */
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Offset general para header fijo */
+.page-content {
+  padding-top: 96px;
+}
+@media (min-width: 768px) {
+  .page-content {
+    padding-top: 112px;
+  }
+}
+
+/* Menú móvil */
+#mobile-menu {
+  display: none;
+}
+#mobile-menu.open {
+  display: block;
+}
+
+/* Estado activo de enlaces de navegación */
+.nav-link.active {
+  color: #a23900;
+  font-weight: 700;
+  border-bottom: 2px solid #a23900;
+  padding-bottom: 4px;
+}
+
+/* Toast simple para mensajes mock (sin backend real) */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}

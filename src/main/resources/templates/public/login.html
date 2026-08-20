@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Iniciar sesión')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+
+<header th:replace="~{fragments/header :: header('login')}"></header>
+
+<main class="flex-grow page-content pb-24 flex items-center justify-center px-margin-mobile">
+    <div class="w-full max-w-md bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-surface-variant">
+        <div class="text-center mb-8">
+            <h1 class="font-headline-lg text-headline-lg text-primary mb-2">Bienvenido de nuevo</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant">Inicia sesión para continuar con tu pedido.</p>
+        </div>
+
+        <form data-mock-submit="Inicio de sesión simulado (aún sin backend)." class="space-y-6">
+            <div>
+                <label class="font-label-md text-label-md text-on-surface block mb-2" for="email">Correo electrónico</label>
+                <input id="email" name="email" type="email" required="required" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="tucorreo@ejemplo.com"/>
+            </div>
+            <div>
+                <label class="font-label-md text-label-md text-on-surface block mb-2" for="password">Contraseña</label>
+                <input id="password" name="password" type="password" required="required" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="••••••••"/>
+            </div>
+
+            <div class="flex items-center justify-between">
+                <label class="flex items-center gap-2 font-body-md text-body-md text-on-surface-variant">
+                    <input type="checkbox" class="rounded border-outline-variant text-primary focus:ring-primary"/> Recordarme
+                </label>
+                <a th:href="@{/recuperar-password}" class="font-label-md text-label-md text-primary hover:text-hover-orange transition-colors">¿Olvidaste tu contraseña?</a>
+            </div>
+
+            <button type="submit" class="w-full bg-primary text-on-primary font-label-md text-label-md py-4 rounded-full hover:bg-hover-orange transition-colors duration-300">
+                Iniciar sesión
+            </button>
+        </form>
+
+        <p class="text-center font-body-md text-body-md text-on-surface-variant mt-8">
+            ¿No tienes una cuenta?
+            <a th:href="@{/registro}" class="text-primary font-label-md text-label-md hover:text-hover-orange transition-colors">Regístrate aquí</a>
+        </p>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>
