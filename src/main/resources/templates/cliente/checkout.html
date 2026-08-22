@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Checkout')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<aside th:replace="~{fragments/cliente-layout :: sidebar('carrito')}"></aside>
+
+<div class="flex-1 min-w-0">
+    <header th:replace="~{fragments/cliente-layout :: topbar('Checkout', 'carrito')}"></header>
+    <nav th:replace="~{fragments/cliente-layout :: mobile-nav('carrito')}"></nav>
+
+    <main class="p-6 md:p-10 max-w-5xl mx-auto space-y-8">
+        <h1 class="hidden lg:block font-headline-lg text-headline-lg text-on-surface">Finalizar pedido</h1>
+
+        <form action="/cliente/pedido-confirmado" method="get" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 space-y-6">
+
+                <!-- Dirección -->
+                <div class="bg-white rounded-xl border border-surface-variant p-6 space-y-4">
+                    <h2 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">location_on</span> Dirección de entrega
+                    </h2>
+                    <div class="space-y-3">
+                        <label th:each="d, iter : ${direcciones}" class="flex items-start gap-3 p-4 rounded-lg border border-outline-variant cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary-fixed/30">
+                            <input type="radio" name="direccion" th:checked="${iter.first}" class="mt-1 text-primary focus:ring-primary"/>
+                            <div>
+                                <p class="font-label-md text-label-md text-on-surface" th:text="${d.etiqueta}">Casa</p>
+                                <p class="font-body-md text-body-md text-on-surface-variant" th:text="${d.direccion} + ', ' + ${d.distrito}">Dirección</p>
+                            </div>
+                        </label>
+                    </div>
+                    <a th:href="@{/cliente/direcciones}" class="inline-flex items-center gap-1 font-label-md text-label-md text-primary hover:text-hover-orange">
+                        <span class="material-symbols-outlined text-[18px]">add</span> Agregar nueva dirección
+                    </a>
+                </div>
+
+                <!-- Método de pago -->
+                <div class="bg-white rounded-xl border border-surface-variant p-6 space-y-4">
+                    <h2 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">credit_card</span> Método de pago
+                    </h2>
+                    <div class="space-y-3">
+                        <label class="flex items-center gap-3 p-4 rounded-lg border border-outline-variant cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary-fixed/30">
+                            <input type="radio" name="pago" checked="checked" class="text-primary focus:ring-primary"/>
+                            <span class="font-body-md text-body-md text-on-surface">Tarjeta de crédito / débito</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-4 rounded-lg border border-outline-variant cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary-fixed/30">
+                            <input type="radio" name="pago" class="text-primary focus:ring-primary"/>
+                            <span class="font-body-md text-body-md text-on-surface">Yape / Plin</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-4 rounded-lg border border-outline-variant cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary-fixed/30">
+                            <input type="radio" name="pago" class="text-primary focus:ring-primary"/>
+                            <span class="font-body-md text-body-md text-on-surface">Efectivo al recibir</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen -->
+            <div class="bg-white rounded-xl border border-surface-variant p-6 h-fit space-y-4 sticky top-24">
+                <h2 class="font-headline-sm text-headline-sm text-on-surface">Resumen</h2>
+                <div class="divide-y divide-outline-variant">
+                    <div th:each="item : ${items}" class="flex justify-between py-2 font-body-md text-body-md text-on-surface-variant">
+                        <span th:text="${item.cantidad} + 'x ' + ${item.nombre}">1x Producto</span>
+                        <span th:text="'S/ ' + ${#numbers.formatDecimal(item.subtotal, 1, 2)}">S/ 0.00</span>
+                    </div>
+                </div>
+                <div class="flex justify-between font-body-md text-body-md text-on-surface-variant pt-2">
+                    <span>Envío</span>
+                    <span>S/ 8.00</span>
+                </div>
+                <div class="flex justify-between font-headline-sm text-headline-sm text-on-surface pt-3 border-t border-outline-variant">
+                    <span>Total</span>
+                    <span th:text="'S/ ' + ${#numbers.formatDecimal(#aggregates.sum(items.![subtotal]) + 8.00, 1, 2)}">S/ 0.00</span>
+                </div>
+                <button type="submit" class="w-full bg-primary text-on-primary font-label-md text-label-md py-4 rounded-full hover:bg-hover-orange transition-colors duration-300">
+                    Confirmar pedido
+                </button>
+            </div>
+        </form>
+    </main>
+</div>
+
+</body>
+</html>

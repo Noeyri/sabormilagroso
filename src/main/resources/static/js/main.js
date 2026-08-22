@@ -13,6 +13,19 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // Menú móvil del área Cliente (Fase 2)
+  var clienteToggle = document.getElementById('cliente-menu-toggle');
+  var clienteMenu = document.getElementById('cliente-mobile-menu');
+  if (clienteToggle && clienteMenu) {
+    clienteToggle.addEventListener('click', function () {
+      clienteMenu.classList.toggle('hidden');
+      var icon = clienteToggle.querySelector('.material-symbols-outlined');
+      if (icon) {
+        icon.textContent = clienteMenu.classList.contains('hidden') ? 'menu' : 'close';
+      }
+    });
+  }
+
   // Interceptar formularios de esta fase (sin backend real todavía) y
   // mostrar una confirmación visual con datos mock.
   document.querySelectorAll('form[data-mock-submit]').forEach(function (form) {

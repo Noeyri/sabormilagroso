@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Editar perfil')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<aside th:replace="~{fragments/cliente-layout :: sidebar('perfil')}"></aside>
+
+<div class="flex-1 min-w-0">
+    <header th:replace="~{fragments/cliente-layout :: topbar('Editar perfil', 'perfil')}"></header>
+    <nav th:replace="~{fragments/cliente-layout :: mobile-nav('perfil')}"></nav>
+
+    <main class="p-6 md:p-10 max-w-3xl mx-auto space-y-8">
+        <a th:href="@{/cliente/perfil}" class="hidden lg:inline-flex items-center gap-1 font-label-md text-label-md text-on-surface-variant hover:text-primary">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span> Volver al perfil
+        </a>
+
+        <form data-mock-submit="Perfil actualizado correctamente (modo demostración)." class="bg-white rounded-xl border border-surface-variant p-6 md:p-8 space-y-6">
+            <h1 class="font-headline-md text-headline-md text-on-surface">Editar perfil</h1>
+
+            <div>
+                <label class="font-label-md text-label-md text-on-surface block mb-2" for="nombre">Nombre completo</label>
+                <input id="nombre" name="nombre" type="text" th:value="${usuarioActual.nombre}" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
+            </div>
+            <div>
+                <label class="font-label-md text-label-md text-on-surface block mb-2" for="email">Correo electrónico</label>
+                <input id="email" name="email" type="email" th:value="${usuarioActual.email}" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
+            </div>
+            <div>
+                <label class="font-label-md text-label-md text-on-surface block mb-2" for="telefono">Teléfono</label>
+                <input id="telefono" name="telefono" type="tel" th:value="${usuarioActual.telefono}" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
+            </div>
+
+            <hr class="border-outline-variant"/>
+
+            <h2 class="font-headline-sm text-headline-sm text-on-surface">Cambiar contraseña</h2>
+            <div>
+                <label class="font-label-md text-label-md text-on-surface block mb-2" for="password-actual">Contraseña actual</label>
+                <input id="password-actual" name="passwordActual" type="password" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="••••••••"/>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="font-label-md text-label-md text-on-surface block mb-2" for="password-nueva">Nueva contraseña</label>
+                    <input id="password-nueva" name="passwordNueva" type="password" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="••••••••"/>
+                </div>
+                <div>
+                    <label class="font-label-md text-label-md text-on-surface block mb-2" for="password-confirmar">Confirmar contraseña</label>
+                    <input id="password-confirmar" name="passwordConfirmar" type="password" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="••••••••"/>
+                </div>
+            </div>
+
+            <div class="flex gap-4 pt-4">
+                <button type="submit" class="bg-primary text-on-primary font-label-md text-label-md px-8 py-3 rounded-full hover:bg-hover-orange transition-colors duration-300">
+                    Guardar cambios
+                </button>
+                <a th:href="@{/cliente/perfil}" class="border-2 border-outline text-on-surface font-label-md text-label-md px-8 py-3 rounded-full hover:bg-surface-container-high transition-colors duration-300 flex items-center">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </main>
+</div>
+
+</body>
+</html>

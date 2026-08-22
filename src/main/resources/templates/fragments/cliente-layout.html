@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Sidebar de navegación del Cliente -->
+<aside th:fragment="sidebar(activo)" class="hidden lg:flex lg:flex-col w-64 shrink-0 bg-white border-r border-outline-variant min-h-screen sticky top-0">
+    <div class="px-6 py-6 border-b border-outline-variant">
+        <a th:href="@{/}" class="flex items-center">
+            <img th:src="@{/img/logo_SaborMilagroso_sinFondo.png}" alt="Sabor Milagroso" class="h-10 w-auto object-contain"/>
+        </a>
+    </div>
+
+    <div class="px-6 py-6 flex items-center gap-3 border-b border-outline-variant" th:with="usuario=${usuarioActual}">
+        <div class="w-11 h-11 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-label-md text-label-md" th:text="${usuario.iniciales}">RM</div>
+        <div class="min-w-0">
+            <p class="font-label-md text-label-md text-on-surface truncate" th:text="${usuario.nombre}">Nombre</p>
+            <p class="font-label-sm text-label-sm text-on-surface-variant truncate" th:text="${usuario.email}">correo@ejemplo.com</p>
+        </div>
+    </div>
+
+    <nav class="flex-grow px-4 py-6 space-y-1">
+        <a th:href="@{/cliente}" th:classappend="${activo == 'dashboard'} ? 'bg-primary-container text-on-primary-container' : 'text-on-surface-variant hover:bg-surface-container-low'"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md transition-colors">
+            <span class="material-symbols-outlined text-[20px]">space_dashboard</span> Dashboard
+        </a>
+        <a th:href="@{/cliente/pedidos}" th:classappend="${activo == 'pedidos'} ? 'bg-primary-container text-on-primary-container' : 'text-on-surface-variant hover:bg-surface-container-low'"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md transition-colors">
+            <span class="material-symbols-outlined text-[20px]">receipt_long</span> Mis pedidos
+        </a>
+        <a th:href="@{/cliente/carrito}" th:classappend="${activo == 'carrito'} ? 'bg-primary-container text-on-primary-container' : 'text-on-surface-variant hover:bg-surface-container-low'"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md transition-colors">
+            <span class="material-symbols-outlined text-[20px]">shopping_cart</span> Carrito
+        </a>
+        <a th:href="@{/cliente/favoritos}" th:classappend="${activo == 'favoritos'} ? 'bg-primary-container text-on-primary-container' : 'text-on-surface-variant hover:bg-surface-container-low'"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md transition-colors">
+            <span class="material-symbols-outlined text-[20px]">favorite</span> Favoritos
+        </a>
+        <a th:href="@{/cliente/direcciones}" th:classappend="${activo == 'direcciones'} ? 'bg-primary-container text-on-primary-container' : 'text-on-surface-variant hover:bg-surface-container-low'"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md transition-colors">
+            <span class="material-symbols-outlined text-[20px]">location_on</span> Direcciones
+        </a>
+        <a th:href="@{/cliente/perfil}" th:classappend="${activo == 'perfil'} ? 'bg-primary-container text-on-primary-container' : 'text-on-surface-variant hover:bg-surface-container-low'"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md transition-colors">
+            <span class="material-symbols-outlined text-[20px]">person</span> Perfil
+        </a>
+    </nav>
+
+    <div class="px-4 py-6 border-t border-outline-variant space-y-1">
+        <a th:href="@{/menu}" class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low transition-colors">
+            <span class="material-symbols-outlined text-[20px]">storefront</span> Volver a la tienda
+        </a>
+        <a th:href="@{/login}" class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md text-error hover:bg-error-container transition-colors">
+            <span class="material-symbols-outlined text-[20px]">logout</span> Cerrar sesión
+        </a>
+    </div>
+</aside>
+
+<!-- Topbar móvil del Cliente -->
+<header th:fragment="topbar(titulo, activo)" class="lg:hidden sticky top-0 z-40 bg-white border-b border-outline-variant px-margin-mobile py-4 flex items-center justify-between">
+    <a th:href="@{/}" class="flex items-center">
+        <img th:src="@{/img/logo_SaborMilagroso_sinFondo.png}" alt="Sabor Milagroso" class="h-9 w-auto object-contain"/>
+    </a>
+    <h1 class="font-headline-sm text-headline-sm text-on-surface" th:text="${titulo}">Sección</h1>
+    <button id="cliente-menu-toggle" aria-label="Abrir menú" class="p-2 rounded-full text-on-surface-variant hover:text-primary">
+        <span class="material-symbols-outlined">menu</span>
+    </button>
+</header>
+
+<!-- Menú móvil desplegable del Cliente -->
+<nav th:fragment="mobile-nav(activo)" id="cliente-mobile-menu" class="lg:hidden hidden bg-white border-b border-outline-variant px-margin-mobile py-4 space-y-1">
+    <a th:href="@{/cliente}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low">Dashboard</a>
+    <a th:href="@{/cliente/pedidos}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low">Mis pedidos</a>
+    <a th:href="@{/cliente/carrito}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low">Carrito</a>
+    <a th:href="@{/cliente/favoritos}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low">Favoritos</a>
+    <a th:href="@{/cliente/direcciones}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low">Direcciones</a>
+    <a th:href="@{/cliente/perfil}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low">Perfil</a>
+    <hr class="border-outline-variant"/>
+    <a th:href="@{/menu}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low">Volver a la tienda</a>
+    <a th:href="@{/login}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-error hover:bg-error-container">Cerrar sesión</a>
+</nav>
+
+</body>
+</html>

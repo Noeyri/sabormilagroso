@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Mis direcciones')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<aside th:replace="~{fragments/cliente-layout :: sidebar('direcciones')}"></aside>
+
+<div class="flex-1 min-w-0">
+    <header th:replace="~{fragments/cliente-layout :: topbar('Mis direcciones', 'direcciones')}"></header>
+    <nav th:replace="~{fragments/cliente-layout :: mobile-nav('direcciones')}"></nav>
+
+    <main class="p-6 md:p-10 max-w-3xl mx-auto space-y-8">
+        <div class="flex items-center justify-between">
+            <h1 class="hidden lg:block font-headline-lg text-headline-lg text-on-surface">Mis direcciones</h1>
+            <button type="button" class="ml-auto inline-flex items-center gap-2 bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-full hover:bg-hover-orange transition-colors duration-300" th:onclick="|showToast('Formulario de nueva dirección (modo demostración).')|">
+                <span class="material-symbols-outlined text-[18px]">add</span> Agregar dirección
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6" th:if="${direcciones != null and !direcciones.isEmpty()}">
+            <div th:each="d : ${direcciones}" class="bg-white rounded-xl border p-6 space-y-3 relative"
+                 th:classappend="${d.predeterminada} ? 'border-primary' : 'border-surface-variant'">
+                <span th:if="${d.predeterminada}" class="absolute top-4 right-4 bg-primary-fixed text-on-primary-fixed px-3 py-1 rounded-full font-label-sm text-label-sm">Predeterminada</span>
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">location_on</span>
+                    <h3 class="font-label-md text-label-md text-on-surface" th:text="${d.etiqueta}">Etiqueta</h3>
+                </div>
+                <p class="font-body-md text-body-md text-on-surface-variant" th:text="${d.direccion}">Dirección</p>
+                <p class="font-body-md text-body-md text-on-surface-variant" th:text="${d.distrito}">Distrito</p>
+                <p class="font-label-sm text-label-sm text-on-surface-variant" th:text="${d.referencia}">Referencia</p>
+                <div class="flex gap-4 pt-2">
+                    <button type="button" class="font-label-md text-label-md text-primary hover:text-hover-orange" th:onclick="|showToast('Edición de dirección (modo demostración).')|">Editar</button>
+                    <button type="button" class="font-label-md text-label-md text-error hover:text-error/80" th:onclick="|showToast('Dirección eliminada (modo demostración).')|">Eliminar</button>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${direcciones == null or direcciones.isEmpty()}" class="text-center py-16 bg-white rounded-xl border border-surface-variant">
+            <span class="material-symbols-outlined text-[48px] text-outline mb-2">location_on</span>
+            <p class="font-body-lg text-body-lg text-on-surface-variant">Aún no tienes direcciones guardadas.</p>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

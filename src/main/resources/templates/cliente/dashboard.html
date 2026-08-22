@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Mi Dashboard')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<aside th:replace="~{fragments/cliente-layout :: sidebar('dashboard')}"></aside>
+
+<div class="flex-1 min-w-0">
+    <header th:replace="~{fragments/cliente-layout :: topbar('Dashboard', 'dashboard')}"></header>
+    <nav th:replace="~{fragments/cliente-layout :: mobile-nav('dashboard')}"></nav>
+
+    <main class="p-6 md:p-10 max-w-5xl mx-auto space-y-10">
+
+        <div class="hidden lg:block">
+            <h1 class="font-headline-lg text-headline-lg text-on-surface">Hola, <span th:text="${usuarioActual.nombre}">Cliente</span> 👋</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant mt-1">Este es el resumen de tu actividad en Sabor Milagroso.</p>
+        </div>
+
+        <!-- Tarjetas resumen -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-xl border border-surface-variant flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center">
+                    <span class="material-symbols-outlined">receipt_long</span>
+                </div>
+                <div>
+                    <p class="font-headline-sm text-headline-sm text-on-surface" th:text="${#lists.size(pedidos)}">0</p>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant">Pedidos realizados</p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-surface-variant flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant flex items-center justify-center">
+                    <span class="material-symbols-outlined">favorite</span>
+                </div>
+                <div>
+                    <p class="font-headline-sm text-headline-sm text-on-surface" th:text="${#lists.size(favoritos)}">0</p>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant">Favoritos guardados</p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-surface-variant flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant flex items-center justify-center">
+                    <span class="material-symbols-outlined">location_on</span>
+                </div>
+                <div>
+                    <p class="font-headline-sm text-headline-sm text-on-surface" th:text="${#lists.size(direcciones)}">0</p>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant">Direcciones guardadas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Últimos pedidos -->
+        <div>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="font-headline-sm text-headline-sm text-on-surface">Últimos pedidos</h2>
+                <a th:href="@{/cliente/pedidos}" class="font-label-md text-label-md text-primary hover:text-hover-orange">Ver todos</a>
+            </div>
+            <div class="bg-white rounded-xl border border-surface-variant divide-y divide-outline-variant">
+                <a th:each="p : ${pedidos}" th:href="@{/cliente/pedidos/{id}(id=${p.id})}" class="flex items-center justify-between p-5 hover:bg-surface-container-low transition-colors">
+                    <div>
+                        <p class="font-label-md text-label-md text-on-surface" th:text="'Pedido ' + ${p.codigo}">Pedido</p>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant" th:text="${p.fecha}">Fecha</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="font-label-sm text-label-sm px-3 py-1 rounded-full"
+                              th:classappend="${p.estado == 'Entregado'} ? 'bg-success-green/15 text-success-green' : (${p.estado == 'Cancelado'} ? 'bg-error-container text-on-error-container' : 'bg-tertiary-fixed text-on-tertiary-fixed-variant')"
+                              th:text="${p.estado}">Estado</span>
+                        <span class="font-label-md text-label-md text-on-surface" th:text="'S/ ' + ${#numbers.formatDecimal(p.total, 1, 2)}">S/ 0.00</span>
+                        <span class="material-symbols-outlined text-outline">chevron_right</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+</body>
+</html>

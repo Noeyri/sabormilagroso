@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Mi perfil')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<aside th:replace="~{fragments/cliente-layout :: sidebar('perfil')}"></aside>
+
+<div class="flex-1 min-w-0">
+    <header th:replace="~{fragments/cliente-layout :: topbar('Mi perfil', 'perfil')}"></header>
+    <nav th:replace="~{fragments/cliente-layout :: mobile-nav('perfil')}"></nav>
+
+    <main class="p-6 md:p-10 max-w-3xl mx-auto space-y-8">
+        <h1 class="hidden lg:block font-headline-lg text-headline-lg text-on-surface">Mi perfil</h1>
+
+        <div class="bg-white rounded-xl border border-surface-variant p-6 md:p-8 space-y-8">
+            <div class="flex items-center gap-5">
+                <div class="w-20 h-20 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-headline-sm text-headline-sm" th:text="${usuarioActual.iniciales}">RM</div>
+                <div>
+                    <h2 class="font-headline-sm text-headline-sm text-on-surface" th:text="${usuarioActual.nombre}">Nombre</h2>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant" th:text="'Cliente desde ' + ${usuarioActual.miembroDesde}">Miembro desde</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Correo electrónico</p>
+                    <p class="font-body-md text-body-md text-on-surface" th:text="${usuarioActual.email}">correo@ejemplo.com</p>
+                </div>
+                <div>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Teléfono</p>
+                    <p class="font-body-md text-body-md text-on-surface" th:text="${usuarioActual.telefono}">Teléfono</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 pt-4 border-t border-outline-variant">
+                <a th:href="@{/cliente/perfil/editar}" class="inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-full hover:bg-hover-orange transition-colors duration-300">
+                    <span class="material-symbols-outlined text-[18px]">edit</span> Editar perfil
+                </a>
+                <a th:href="@{/cliente/direcciones}" class="inline-flex items-center justify-center gap-2 border-2 border-outline text-on-surface font-label-md text-label-md px-6 py-3 rounded-full hover:bg-surface-container-high transition-colors duration-300">
+                    <span class="material-symbols-outlined text-[18px]">location_on</span> Mis direcciones
+                </a>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

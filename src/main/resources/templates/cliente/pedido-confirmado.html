@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Pedido confirmado')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<aside th:replace="~{fragments/cliente-layout :: sidebar('carrito')}"></aside>
+
+<div class="flex-1 min-w-0">
+    <header th:replace="~{fragments/cliente-layout :: topbar('Pedido confirmado', 'carrito')}"></header>
+    <nav th:replace="~{fragments/cliente-layout :: mobile-nav('carrito')}"></nav>
+
+    <main class="p-6 md:p-10 max-w-2xl mx-auto">
+        <div class="bg-white rounded-2xl border border-surface-variant p-8 md:p-12 text-center space-y-6">
+            <div class="w-20 h-20 rounded-full bg-success-green/15 text-success-green flex items-center justify-center mx-auto">
+                <span class="material-symbols-outlined text-[40px]">check_circle</span>
+            </div>
+            <div>
+                <h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">¡Pedido confirmado!</h1>
+                <p class="font-body-lg text-body-lg text-on-surface-variant">
+                    Gracias por tu compra. Tu pedido <strong th:text="${pedido.codigo}">SM-0000</strong> está siendo procesado.
+                </p>
+            </div>
+
+            <div class="bg-surface-container rounded-xl p-6 text-left space-y-2">
+                <div class="flex justify-between font-body-md text-body-md">
+                    <span class="text-on-surface-variant">Fecha</span>
+                    <span class="text-on-surface" th:text="${pedido.fecha}">Fecha</span>
+                </div>
+                <div class="flex justify-between font-body-md text-body-md">
+                    <span class="text-on-surface-variant">Dirección de entrega</span>
+                    <span class="text-on-surface text-right" th:text="${pedido.direccionEntrega}">Dirección</span>
+                </div>
+                <div class="flex justify-between font-headline-sm text-headline-sm pt-2 border-t border-outline-variant">
+                    <span class="text-on-surface">Total pagado</span>
+                    <span class="text-primary" th:text="'S/ ' + ${#numbers.formatDecimal(pedido.total, 1, 2)}">S/ 0.00</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+                <a th:href="@{/cliente/pedidos/{id}(id=${pedido.id})}" class="bg-primary text-on-primary font-label-md text-label-md px-8 py-4 rounded-full hover:bg-hover-orange transition-colors duration-300">
+                    Ver seguimiento del pedido
+                </a>
+                <a th:href="@{/menu}" class="border-2 border-outline text-on-surface font-label-md text-label-md px-8 py-4 rounded-full hover:bg-surface-container-high transition-colors duration-300">
+                    Seguir comprando
+                </a>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

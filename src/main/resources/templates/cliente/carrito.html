@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Carrito')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<aside th:replace="~{fragments/cliente-layout :: sidebar('carrito')}"></aside>
+
+<div class="flex-1 min-w-0">
+    <header th:replace="~{fragments/cliente-layout :: topbar('Carrito', 'carrito')}"></header>
+    <nav th:replace="~{fragments/cliente-layout :: mobile-nav('carrito')}"></nav>
+
+    <main class="p-6 md:p-10 max-w-5xl mx-auto space-y-8">
+        <h1 class="hidden lg:block font-headline-lg text-headline-lg text-on-surface">Mi carrito</h1>
+
+        <div th:if="${items != null and !items.isEmpty()}" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Lista de items -->
+            <div class="lg:col-span-2 bg-white rounded-xl border border-surface-variant divide-y divide-outline-variant">
+                <div th:each="item, iter : ${items}" class="flex items-center gap-4 p-5">
+                    <img class="w-20 h-20 rounded-lg object-cover" th:src="${item.imagenUrl}" th:alt="${item.nombre}"/>
+                    <div class="flex-grow min-w-0">
+                        <p class="font-label-md text-label-md text-on-surface truncate" th:text="${item.nombre}">Producto</p>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant" th:text="'S/ ' + ${#numbers.formatDecimal(item.precioUnitario, 1, 2)} + ' c/u'">S/ 0.00 c/u</p>
+                    </div>
+                    <div class="flex items-center border border-outline-variant rounded-full shrink-0">
+                        <button type="button" class="w-9 h-9 flex items-center justify-center text-on-surface-variant hover:text-primary" th:onclick="|showToast('Cantidad actualizada (modo demostración).')|">
+                            <span class="material-symbols-outlined text-[18px]">remove</span>
+                        </button>
+                        <span class="w-8 text-center font-label-md text-label-md" th:text="${item.cantidad}">1</span>
+                        <button type="button" class="w-9 h-9 flex items-center justify-center text-on-surface-variant hover:text-primary" th:onclick="|showToast('Cantidad actualizada (modo demostración).')|">
+                            <span class="material-symbols-outlined text-[18px]">add</span>
+                        </button>
+                    </div>
+                    <span class="font-label-md text-label-md text-on-surface w-20 text-right shrink-0" th:text="'S/ ' + ${#numbers.formatDecimal(item.subtotal, 1, 2)}">S/ 0.00</span>
+                    <button type="button" aria-label="Quitar" class="text-on-surface-variant hover:text-error shrink-0" th:onclick="|showToast('Producto eliminado del carrito (modo demostración).')|">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Resumen -->
+            <div class="bg-white rounded-xl border border-surface-variant p-6 h-fit space-y-4 sticky top-24">
+                <h2 class="font-headline-sm text-headline-sm text-on-surface">Resumen del pedido</h2>
+                <div class="flex justify-between font-body-md text-body-md text-on-surface-variant">
+                    <span>Subtotal</span>
+                    <span th:text="'S/ ' + ${#numbers.formatDecimal(#aggregates.sum(items.![subtotal]), 1, 2)}">S/ 0.00</span>
+                </div>
+                <div class="flex justify-between font-body-md text-body-md text-on-surface-variant">
+                    <span>Envío</span>
+                    <span>S/ 8.00</span>
+                </div>
+                <div class="flex justify-between font-headline-sm text-headline-sm text-on-surface pt-3 border-t border-outline-variant">
+                    <span>Total</span>
+                    <span th:text="'S/ ' + ${#numbers.formatDecimal(#aggregates.sum(items.![subtotal]) + 8.00, 1, 2)}">S/ 0.00</span>
+                </div>
+                <a th:href="@{/cliente/checkout}" class="block text-center bg-primary text-on-primary font-label-md text-label-md py-4 rounded-full hover:bg-hover-orange transition-colors duration-300">
+                    Ir a pagar
+                </a>
+            </div>
+        </div>
+
+        <div th:if="${items == null or items.isEmpty()}" class="text-center py-16 bg-white rounded-xl border border-surface-variant">
+            <span class="material-symbols-outlined text-[48px] text-outline mb-2">shopping_cart</span>
+            <p class="font-body-lg text-body-lg text-on-surface-variant">Tu carrito está vacío.</p>
+            <a th:href="@{/menu}" class="inline-block mt-4 bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-full hover:bg-hover-orange transition-colors">Ir al menú</a>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

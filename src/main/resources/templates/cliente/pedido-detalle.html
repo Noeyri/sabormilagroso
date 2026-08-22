@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Pedido ' + ${pedido.codigo})}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<aside th:replace="~{fragments/cliente-layout :: sidebar('pedidos')}"></aside>
+
+<div class="flex-1 min-w-0">
+    <header th:replace="~{fragments/cliente-layout :: topbar('Detalle de pedido', 'pedidos')}"></header>
+    <nav th:replace="~{fragments/cliente-layout :: mobile-nav('pedidos')}"></nav>
+
+    <main class="p-6 md:p-10 max-w-3xl mx-auto space-y-8">
+
+        <a th:href="@{/cliente/pedidos}" class="hidden lg:inline-flex items-center gap-1 font-label-md text-label-md text-on-surface-variant hover:text-primary">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span> Volver a mis pedidos
+        </a>
+
+        <div class="bg-white rounded-xl border border-surface-variant p-6 md:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h1 class="font-headline-md text-headline-md text-on-surface" th:text="'Pedido ' + ${pedido.codigo}">Pedido</h1>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant" th:text="${pedido.fecha}">Fecha</p>
+                </div>
+                <span class="font-label-md text-label-md px-4 py-2 rounded-full"
+                      th:classappend="${pedido.estado == 'Entregado'} ? 'bg-success-green/15 text-success-green' : (${pedido.estado == 'Cancelado'} ? 'bg-error-container text-on-error-container' : 'bg-tertiary-fixed text-on-tertiary-fixed-variant')"
+                      th:text="${pedido.estado}">Estado</span>
+            </div>
+
+            <!-- Progreso del pedido (visual) -->
+            <div class="flex items-center justify-between" th:if="${pedido.estado != 'Cancelado'}">
+                <div class="flex-1 flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">check</span></div>
+                    <div class="flex-1 h-1 bg-primary"></div>
+                </div>
+                <div class="flex-1 flex items-center">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center" th:classappend="${pedido.estado == 'En preparación'} ? 'bg-surface-variant text-on-surface-variant' : 'bg-primary text-on-primary'">
+                        <span class="material-symbols-outlined text-[18px]">soup_kitchen</span>
+                    </div>
+                    <div class="flex-1 h-1" th:classappend="${pedido.estado == 'En preparación'} ? 'bg-surface-variant' : 'bg-primary'"></div>
+                </div>
+                <div class="flex-1 flex items-center">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center" th:classappend="${pedido.estado == 'Entregado'} ? 'bg-primary text-on-primary' : 'bg-surface-variant text-on-surface-variant'">
+                        <span class="material-symbols-outlined text-[18px]">delivery_dining</span>
+                    </div>
+                    <div class="flex-1 h-1" th:classappend="${pedido.estado == 'Entregado'} ? 'bg-primary' : 'bg-surface-variant'"></div>
+                </div>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center" th:classappend="${pedido.estado == 'Entregado'} ? 'bg-primary text-on-primary' : 'bg-surface-variant text-on-surface-variant'">
+                    <span class="material-symbols-outlined text-[18px]">home</span>
+                </div>
+            </div>
+
+            <!-- Items -->
+            <div class="divide-y divide-outline-variant border-t border-b border-outline-variant">
+                <div th:each="item : ${pedido.items}" class="flex items-center gap-4 py-4">
+                    <img class="w-16 h-16 rounded-lg object-cover" th:src="${item.imagenUrl}" th:alt="${item.nombre}"/>
+                    <div class="flex-grow">
+                        <p class="font-label-md text-label-md text-on-surface" th:text="${item.nombre}">Producto</p>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant" th:text="'x' + ${item.cantidad}">x1</p>
+                    </div>
+                    <span class="font-label-md text-label-md text-on-surface" th:text="'S/ ' + ${#numbers.formatDecimal(item.subtotal, 1, 2)}">S/ 0.00</span>
+                </div>
+            </div>
+
+            <!-- Totales -->
+            <div class="space-y-2">
+                <div class="flex justify-between font-body-md text-body-md text-on-surface-variant">
+                    <span>Subtotal</span>
+                    <span th:text="'S/ ' + ${#numbers.formatDecimal(pedido.subtotal, 1, 2)}">S/ 0.00</span>
+                </div>
+                <div class="flex justify-between font-body-md text-body-md text-on-surface-variant">
+                    <span>Envío</span>
+                    <span th:text="'S/ ' + ${#numbers.formatDecimal(pedido.envio, 1, 2)}">S/ 0.00</span>
+                </div>
+                <div class="flex justify-between font-headline-sm text-headline-sm text-on-surface pt-2 border-t border-outline-variant">
+                    <span>Total</span>
+                    <span th:text="'S/ ' + ${#numbers.formatDecimal(pedido.total, 1, 2)}">S/ 0.00</span>
+                </div>
+            </div>
+
+            <!-- Datos de entrega -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-outline-variant">
+                <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary">location_on</span>
+                    <div>
+                        <p class="font-label-md text-label-md text-on-surface">Dirección de entrega</p>
+                        <p class="font-body-md text-body-md text-on-surface-variant" th:text="${pedido.direccionEntrega}">Dirección</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary">credit_card</span>
+                    <div>
+                        <p class="font-label-md text-label-md text-on-surface">Método de pago</p>
+                        <p class="font-body-md text-body-md text-on-surface-variant" th:text="${pedido.metodoPago}">Método</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+</body>
+</html>

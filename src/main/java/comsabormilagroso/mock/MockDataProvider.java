@@ -1,6 +1,10 @@
 package comsabormilagroso.mock;
 
+import comsabormilagroso.dto.DireccionDTO;
+import comsabormilagroso.dto.ItemPedidoDTO;
+import comsabormilagroso.dto.PedidoDTO;
 import comsabormilagroso.dto.ProductoDTO;
+import comsabormilagroso.dto.UsuarioClienteDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -19,6 +23,10 @@ import java.util.Optional;
 public class MockDataProvider {
 
     private final List<ProductoDTO> productos = new ArrayList<>();
+    private final List<PedidoDTO> pedidos = new ArrayList<>();
+    private final List<DireccionDTO> direcciones = new ArrayList<>();
+    private final List<Long> favoritosIds = new ArrayList<>();
+    private UsuarioClienteDTO usuarioCliente;
 
     public MockDataProvider() {
         productos.add(new ProductoDTO(1L, "Ceviche Clásico", "Platos criollos",
@@ -38,11 +46,11 @@ public class MockDataProvider {
                 true, false, 4.9, 35));
 
         productos.add(new ProductoDTO(3L, "Lomo Saltado Tradicional", "Platos criollos",
-                "Lomo fino salteado al wok con cebolla, tomate y ají amarillo, papas fritas y arroz.",
+                "Trozos de lomo fino salteados al wok con cebolla, tomate y ají amarillo, papas fritas y arroz.",
                 "Trozos de lomo fino salteados al wok a fuego alto con cebolla roja, tomate, ají amarillo y sillao. " +
                         "Servido con crujientes papas amarillas fritas y arroz blanco graneado. El plato bandera de la " +
                         "cocina chifa-criolla peruana.",
-                48.00, null, "https://lh3.googleusercontent.com/aida-public/AB6AXuAyz3EL4HsTJfPu2r8WWBHYCxihuEaj00GGF997mHrJ-5T1zaQ7_2_ELyxS-GXi2Xp0fTBj7Ahqgzki2PSMcah4sc92yMO4-TNqQGuldPK1kv6Ka1Y1aV8N9Jc55HMxL0WXazm6ZEcSGP7jlcoowa4x1MIGeQWds1ubl14k7lbIU5A7lF70odhfq5mkzi3tx-0jLWh8ri7c01h2B4vX9jah_70joYhVNXXjG2e72I4xYeSfT0m-xrJ0",
+                48.00, null, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxMp-JpDg_8eBIAmXrJKx9xYfRAcyd0OOGPY4oatlsmU_pnCKg6RYJ64o&s=10",
                 false, true, 4.7, 25));
 
         productos.add(new ProductoDTO(4L, "Ají de Gallina", "Platos criollos",
@@ -66,6 +74,42 @@ public class MockDataProvider {
                         "yemas de huevo, coronado con un delicado merengue italiano perfumado con oporto.",
                 18.00, null, "https://lh3.googleusercontent.com/aida-public/AB6AXuBrVJxyv2HNNPCqUaAHabY4hyYqjsib5kd_1X9qKr-esgvqSbj3h0D7qjBGZeIPwTOScYEx8jXWq2BrtKDMADBKCAG2cHyMXKQf4mc1pPfnbU1OBV7rhw9RQjqqOHc4giq6xl8COF6olUW7i52oZ-0e9sC3dZ7oYZ5MBjSU-BjJ6wNpPD6hzapZTinzQZ77eIsXEl4chk30pfqe2WcX8rTxbB5Dm9-6x--66DvT7MHSC7dIl6Q_iuzZ",
                 false, false, 4.4, 10));
+
+        // --- Usuario cliente (mock, sin autenticación real todavía) ---
+        usuarioCliente = new UsuarioClienteDTO("Rosa Mendoza", "rosa.mendoza@example.com",
+                "+51 987 111 222", null, "Marzo 2024");
+
+        // --- Direcciones mock ---
+        direcciones.add(new DireccionDTO(1L, "Casa", "Jr. Los Álamos 245, Dpto. 302", "San Borja",
+                "Frente al parque, puerta blanca", true));
+        direcciones.add(new DireccionDTO(2L, "Trabajo", "Av. Javier Prado Este 1450, Piso 8", "San Isidro",
+                "Recepción, edificio Torre Azul", false));
+
+        // --- Favoritos mock (referencian productos existentes) ---
+        favoritosIds.add(1L);
+        favoritosIds.add(3L);
+        favoritosIds.add(5L);
+
+        // --- Pedidos mock ---
+        pedidos.add(new PedidoDTO(1001L, "SM-1001", "18 ago. 2026, 8:20 p.m.", "Entregado",
+                "Jr. Los Álamos 245, Dpto. 302 - San Borja", "Tarjeta de crédito",
+                List.of(
+                        new ItemPedidoDTO(1L, "Ceviche Clásico", productos.get(0).getImagenUrl(), 1, 45.00),
+                        new ItemPedidoDTO(5L, "Pisco Sour Catedral", productos.get(4).getImagenUrl(), 2, 28.00)
+                )));
+
+        pedidos.add(new PedidoDTO(1002L, "SM-1002", "20 ago. 2026, 1:05 p.m.", "En camino",
+                "Av. Javier Prado Este 1450, Piso 8 - San Isidro", "Yape",
+                List.of(
+                        new ItemPedidoDTO(2L, "Pollo a la Brasa Entero", productos.get(1).getImagenUrl(), 1, 65.00)
+                )));
+
+        pedidos.add(new PedidoDTO(1003L, "SM-1003", "22 ago. 2026, 12:40 p.m.", "En preparación",
+                "Jr. Los Álamos 245, Dpto. 302 - San Borja", "Efectivo",
+                List.of(
+                        new ItemPedidoDTO(3L, "Lomo Saltado Tradicional", productos.get(2).getImagenUrl(), 1, 48.00),
+                        new ItemPedidoDTO(6L, "Suspiro a la Limeña", productos.get(5).getImagenUrl(), 2, 18.00)
+                )));
     }
 
     public List<ProductoDTO> obtenerTodos() {
@@ -86,5 +130,41 @@ public class MockDataProvider {
 
     public List<String> obtenerCategorias() {
         return List.of("Criollos", "Ceviches", "Pollo a la brasa", "Parrillas", "Postres", "Bebidas");
+    }
+
+    // ---------------------------------------------------------------
+    // Datos mock del ÁREA CLIENTE (Fase 2)
+    // ---------------------------------------------------------------
+
+    public UsuarioClienteDTO obtenerUsuarioActual() {
+        return usuarioCliente;
+    }
+
+    public List<PedidoDTO> obtenerPedidosCliente() {
+        return pedidos;
+    }
+
+    public Optional<PedidoDTO> obtenerPedidoPorId(Long id) {
+        return pedidos.stream().filter(p -> p.getId().equals(id)).findFirst();
+    }
+
+    public List<DireccionDTO> obtenerDirecciones() {
+        return direcciones;
+    }
+
+    public List<ProductoDTO> obtenerFavoritos() {
+        return productos.stream().filter(p -> favoritosIds.contains(p.getId())).toList();
+    }
+
+    /*
+      Carrito mock fijo, solo para maquetar Carrito/Checkout/Confirmación.
+      En Fase 4 esto se reemplazará por un carrito real basado en sesión/usuario.
+     */
+    public List<ItemPedidoDTO> obtenerCarritoMock() {
+        return new ArrayList<>(List.of(
+                new ItemPedidoDTO(1L, "Ceviche Clásico", productos.get(0).getImagenUrl(), 1, 45.00),
+                new ItemPedidoDTO(2L, "Pollo a la Brasa Entero", productos.get(1).getImagenUrl(), 1, 65.00),
+                new ItemPedidoDTO(6L, "Suspiro a la Limeña", productos.get(5).getImagenUrl(), 2, 18.00)
+        ));
     }
 }

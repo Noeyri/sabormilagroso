@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Mis pedidos')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<aside th:replace="~{fragments/cliente-layout :: sidebar('pedidos')}"></aside>
+
+<div class="flex-1 min-w-0">
+    <header th:replace="~{fragments/cliente-layout :: topbar('Mis pedidos', 'pedidos')}"></header>
+    <nav th:replace="~{fragments/cliente-layout :: mobile-nav('pedidos')}"></nav>
+
+    <main class="p-6 md:p-10 max-w-5xl mx-auto space-y-8">
+        <h1 class="hidden lg:block font-headline-lg text-headline-lg text-on-surface">Mis pedidos</h1>
+
+        <div class="bg-white rounded-xl border border-surface-variant divide-y divide-outline-variant" th:if="${pedidos != null and !pedidos.isEmpty()}">
+            <a th:each="p : ${pedidos}" th:href="@{/cliente/pedidos/{id}(id=${p.id})}" class="flex flex-col md:flex-row md:items-center justify-between gap-3 p-5 hover:bg-surface-container-low transition-colors">
+                <div>
+                    <p class="font-label-md text-label-md text-on-surface" th:text="'Pedido ' + ${p.codigo}">Pedido</p>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant" th:text="${p.fecha}">Fecha</p>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant" th:text="${p.cantidadItems} + ' producto(s)'">0 productos</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="font-label-sm text-label-sm px-3 py-1 rounded-full"
+                          th:classappend="${p.estado == 'Entregado'} ? 'bg-success-green/15 text-success-green' : (${p.estado == 'Cancelado'} ? 'bg-error-container text-on-error-container' : 'bg-tertiary-fixed text-on-tertiary-fixed-variant')"
+                          th:text="${p.estado}">Estado</span>
+                    <span class="font-label-md text-label-md text-on-surface" th:text="'S/ ' + ${#numbers.formatDecimal(p.total, 1, 2)}">S/ 0.00</span>
+                    <span class="material-symbols-outlined text-outline">chevron_right</span>
+                </div>
+            </a>
+        </div>
+
+        <div th:if="${pedidos == null or pedidos.isEmpty()}" class="text-center py-16 bg-white rounded-xl border border-surface-variant">
+            <span class="material-symbols-outlined text-[48px] text-outline mb-2">receipt_long</span>
+            <p class="font-body-lg text-body-lg text-on-surface-variant">Aún no tienes pedidos realizados.</p>
+            <a th:href="@{/menu}" class="inline-block mt-4 bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-full hover:bg-hover-orange transition-colors">Ir al menú</a>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>
