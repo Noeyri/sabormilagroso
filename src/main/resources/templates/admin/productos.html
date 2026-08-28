@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Productos')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<aside th:replace="~{fragments/admin-layout :: sidebar('productos')}"></aside>
+
+<div class="flex-1 min-w-0">
+    <header th:replace="~{fragments/admin-layout :: topbar('Productos', 'productos')}"></header>
+    <nav th:replace="~{fragments/admin-layout :: mobile-nav('productos')}"></nav>
+
+    <main class="p-6 md:p-10 max-w-6xl mx-auto space-y-8">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <h1 class="hidden lg:block font-headline-lg text-headline-lg text-on-surface">Productos</h1>
+            <a th:href="@{/admin/productos/nuevo}" class="inline-flex items-center gap-2 bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-full hover:bg-hover-orange transition-colors duration-300">
+                <span class="material-symbols-outlined text-[18px]">add</span> Nuevo producto
+            </a>
+        </div>
+
+        <div class="bg-surface/90 border border-outline-variant p-4 rounded-xl flex flex-col md:flex-row gap-4">
+            <div class="relative flex-1">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+                <input class="w-full pl-12 pr-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-body-md outline-none" placeholder="Buscar producto..." type="text"/>
+            </div>
+            <select class="px-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest font-label-md text-label-md text-on-surface outline-none">
+                <option>Todas las categorías</option>
+                <option th:each="c : ${categorias}" th:text="${c.nombre}">Categoría</option>
+            </select>
+        </div>
+
+        <div class="bg-white rounded-xl border border-surface-variant overflow-x-auto">
+            <table class="w-full text-left min-w-[720px]">
+                <thead class="bg-surface-container-low">
+                    <tr>
+                        <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Producto</th>
+                        <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Categoría</th>
+                        <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant text-right">Precio</th>
+                        <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Estado</th>
+                        <th class="px-5 py-3"></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-outline-variant">
+                    <tr th:each="p : ${productos}" class="hover:bg-surface-container-low">
+                        <td class="px-5 py-4">
+                            <div class="flex items-center gap-3">
+                                <img class="w-12 h-12 rounded-lg object-cover" th:src="${p.imagenUrl}" th:alt="${p.nombre}"/>
+                                <span class="font-label-md text-label-md text-on-surface" th:text="${p.nombre}">Plato</span>
+                            </div>
+                        </td>
+                        <td class="px-5 py-4 font-body-md text-body-md text-on-surface-variant" th:text="${p.categoria}">Categoría</td>
+                        <td class="px-5 py-4 font-label-md text-label-md text-on-surface text-right" th:text="'S/ ' + ${#numbers.formatDecimal(p.precio, 1, 2)}">S/ 0.00</td>
+                        <td class="px-5 py-4">
+                            <span class="font-label-sm text-label-sm px-3 py-1 rounded-full bg-success-green/15 text-success-green">Disponible</span>
+                        </td>
+                        <td class="px-5 py-4 text-right whitespace-nowrap">
+                            <a th:href="@{/admin/productos/{id}/editar(id=${p.id})}" aria-label="Editar" class="inline-flex p-2 text-secondary hover:text-primary">
+                                <span class="material-symbols-outlined text-[20px]">edit</span>
+                            </a>
+                            <button type="button" aria-label="Eliminar" class="inline-flex p-2 text-secondary hover:text-error" th:onclick="|showToast('Producto eliminado (modo demostración).')|">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

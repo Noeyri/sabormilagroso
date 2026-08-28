@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Dashboard Admin')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<aside th:replace="~{fragments/admin-layout :: sidebar('dashboard')}"></aside>
+
+<div class="flex-1 min-w-0">
+    <header th:replace="~{fragments/admin-layout :: topbar('Dashboard', 'dashboard')}"></header>
+    <nav th:replace="~{fragments/admin-layout :: mobile-nav('dashboard')}"></nav>
+
+    <main class="p-6 md:p-10 max-w-6xl mx-auto space-y-10">
+
+        <div class="hidden lg:block">
+            <h1 class="font-headline-lg text-headline-lg text-on-surface">Panel de control</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant mt-1">Resumen general del negocio.</p>
+        </div>
+
+        <!-- Métricas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white p-6 rounded-xl border border-surface-variant space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="material-symbols-outlined text-primary text-[28px]">payments</span>
+                </div>
+                <p class="font-headline-md text-headline-md text-on-surface" th:text="'S/ ' + ${#numbers.formatDecimal(ventasTotales, 1, 2)}">S/ 0.00</p>
+                <p class="font-label-sm text-label-sm text-on-surface-variant">Ventas totales</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-surface-variant space-y-2">
+                <span class="material-symbols-outlined text-tertiary text-[28px]">receipt_long</span>
+                <p class="font-headline-md text-headline-md text-on-surface" th:text="${#lists.size(pedidos)}">0</p>
+                <p class="font-label-sm text-label-sm text-on-surface-variant">Pedidos totales</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-surface-variant space-y-2">
+                <span class="material-symbols-outlined text-secondary text-[28px]">hourglass_top</span>
+                <p class="font-headline-md text-headline-md text-on-surface" th:text="${pedidosPendientes}">0</p>
+                <p class="font-label-sm text-label-sm text-on-surface-variant">Pedidos pendientes</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-surface-variant space-y-2">
+                <span class="material-symbols-outlined text-primary text-[28px]">group</span>
+                <p class="font-headline-md text-headline-md text-on-surface" th:text="${#lists.size(usuarios)}">0</p>
+                <p class="font-label-sm text-label-sm text-on-surface-variant">Usuarios registrados</p>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white rounded-xl border border-surface-variant p-6">
+                <h2 class="font-headline-sm text-headline-sm text-on-surface mb-4">Tendencia de ventas (últimos 7 días)</h2>
+                <div class="w-full h-64">
+                    <canvas id="tendenciaVentasChart"></canvas>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl border border-surface-variant p-6">
+                <h2 class="font-headline-sm text-headline-sm text-on-surface mb-4">Platos más populares</h2>
+                <div class="w-full h-64">
+                    <canvas id="productosVendidosChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pedidos recientes -->
+        <div>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="font-headline-sm text-headline-sm text-on-surface">Pedidos recientes</h2>
+                <a th:href="@{/admin/pedidos}" class="font-label-md text-label-md text-primary hover:text-hover-orange">Ver todos</a>
+            </div>
+            <div class="bg-white rounded-xl border border-surface-variant overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-surface-container-low">
+                        <tr>
+                            <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Código</th>
+                            <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Fecha</th>
+                            <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Estado</th>
+                            <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant text-right">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-outline-variant">
+                        <tr th:each="p : ${pedidos}" class="hover:bg-surface-container-low cursor-pointer" th:onclick="|window.location.href='/admin/pedidos/${p.id}'|">
+                            <td class="px-5 py-4 font-label-md text-label-md text-on-surface" th:text="${p.codigo}">SM-0000</td>
+                            <td class="px-5 py-4 font-body-md text-body-md text-on-surface-variant" th:text="${p.fecha}">Fecha</td>
+                            <td class="px-5 py-4">
+                                <span class="font-label-sm text-label-sm px-3 py-1 rounded-full"
+                                      th:classappend="${p.estado == 'Entregado'} ? 'bg-success-green/15 text-success-green' : (${p.estado == 'Cancelado'} ? 'bg-error-container text-on-error-container' : 'bg-tertiary-fixed text-on-tertiary-fixed-variant')"
+                                      th:text="${p.estado}">Estado</span>
+                            </td>
+                            <td class="px-5 py-4 font-label-md text-label-md text-on-surface text-right" th:text="'S/ ' + ${#numbers.formatDecimal(p.total, 1, 2)}">S/ 0.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Productos populares -->
+        <div>
+            <h2 class="font-headline-sm text-headline-sm text-on-surface mb-4">Productos destacados</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div th:each="p : ${productos}" th:if="${p.popular}" class="bg-white rounded-xl border border-surface-variant p-4 flex items-center gap-4">
+                    <img class="w-14 h-14 rounded-lg object-cover" th:src="${p.imagenUrl}" th:alt="${p.nombre}"/>
+                    <div class="min-w-0">
+                        <p class="font-label-md text-label-md text-on-surface truncate" th:text="${p.nombre}">Plato</p>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant" th:text="'S/ ' + ${#numbers.formatDecimal(p.precio, 1, 2)}">S/ 0.00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- Gráficos de tendencia de ventas y platos populares (Chart.js) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const colorPrimary = '#C0562F';
+        const colorPrimaryLight = 'rgba(192, 86, 47, 0.1)';
+        const colorTertiary = '#9A3B21';
+        const colorSuccess = '#5C8D61';
+        const colorVariant = '#D9534F';
+
+        // Nombres de los productos marcados como populares (dato real del backend)
+        const nombresPopulares = /*[[${productos.?[popular]. ![nombre]}]]*/ ['Plato 1', 'Plato 2', 'Plato 3'];
+
+        new Chart(document.getElementById('tendenciaVentasChart'), {
+            type: 'line',
+            data: {
+                labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                datasets: [{
+                    label: 'Ventas (S/)',
+                    data: [450, 520, 480, 710, 890, 1200, 1150],
+                    borderColor: colorPrimary,
+                    backgroundColor: colorPrimaryLight,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        new Chart(document.getElementById('productosVendidosChart'), {
+            type: 'pie',
+            data: {
+                labels: nombresPopulares,
+                datasets: [{
+                    data: nombresPopulares.map(() => Math.floor(Math.random() * 30) + 10),
+                    backgroundColor: [colorPrimary, colorTertiary, colorSuccess, colorVariant]
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    });
+</script>
+
+</body>
+</html>

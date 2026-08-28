@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Sidebar de navegación del Admin -->
+<aside th:fragment="sidebar(activo)" class="hidden lg:flex lg:flex-col w-64 shrink-0 bg-inverse-surface text-inverse-on-surface min-h-screen sticky top-0">
+    <div class="px-6 py-6 border-b border-white/10 flex justify-center">
+        <a th:href="@{/}" class="flex items-center justify-center">
+            <img th:src="@{/img/logo_SaborMilagroso_sinFondo.png}" alt="Sabor Milagroso" class="h-16 w-auto object-contain"/>
+        </a>
+    </div>
+
+    <div class="px-6 py-6 flex items-center gap-3 border-b border-white/10" th:with="usuario=${usuarioActual}">
+        <div class="w-11 h-11 rounded-full bg-tertiary text-on-tertiary flex items-center justify-center font-label-md text-label-md" th:text="${usuario.iniciales}">CR</div>
+        <div class="min-w-0">
+            <p class="font-label-md text-label-md text-white truncate" th:text="${usuario.nombre}">Nombre</p>
+            <p class="font-label-sm text-label-sm text-white/60 truncate" th:text="${usuario.rol}">Rol</p>
+        </div>
+    </div>
+
+    <nav class="flex-grow px-4 py-6 space-y-1 overflow-y-auto">
+        <a th:href="@{/admin}" th:classappend="${activo == 'dashboard'} ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md transition-colors">
+            <span class="material-symbols-outlined text-[20px]">space_dashboard</span> Dashboard
+        </a>
+        <a th:href="@{/admin/pedidos}" th:classappend="${activo == 'pedidos'} ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md transition-colors">
+            <span class="material-symbols-outlined text-[20px]">receipt_long</span> Pedidos
+        </a>
+        <a th:href="@{/admin/productos}" th:classappend="${activo == 'productos'} ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md transition-colors">
+            <span class="material-symbols-outlined text-[20px]">restaurant_menu</span> Productos
+        </a>
+        <a th:href="@{/admin/categorias}" th:classappend="${activo == 'categorias'} ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md transition-colors">
+            <span class="material-symbols-outlined text-[20px]">category</span> Categorías
+        </a>
+        <a th:href="@{/admin/promociones}" th:classappend="${activo == 'promociones'} ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md transition-colors">
+            <span class="material-symbols-outlined text-[20px]">local_offer</span> Promociones
+        </a>
+        <a th:href="@{/admin/usuarios}" th:classappend="${activo == 'usuarios'} ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md transition-colors">
+            <span class="material-symbols-outlined text-[20px]">group</span> Usuarios
+        </a>
+        <a th:href="@{/admin/reportes}" th:classappend="${activo == 'reportes'} ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md transition-colors">
+            <span class="material-symbols-outlined text-[20px]">bar_chart</span> Reportes
+        </a>
+        <a th:href="@{/admin/configuracion}" th:classappend="${activo == 'configuracion'} ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md transition-colors">
+            <span class="material-symbols-outlined text-[20px]">settings</span> Configuración
+        </a>
+        <a th:href="@{/admin/perfil}" th:classappend="${activo == 'perfil'} ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md transition-colors">
+            <span class="material-symbols-outlined text-[20px]">person</span> Mi perfil
+        </a>
+    </nav>
+
+    <div class="px-4 py-6 border-t border-white/10 space-y-1">
+        <a th:href="@{/}" class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md text-white/70 hover:bg-white/5 hover:text-white transition-colors">
+            <span class="material-symbols-outlined text-[20px]">storefront</span> Ver tienda
+        </a>
+        <a th:href="@{/login}" class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md text-error hover:bg-white/5 transition-colors">
+            <span class="material-symbols-outlined text-[20px]">logout</span> Cerrar sesión
+        </a>
+    </div>
+</aside>
+
+<!-- Topbar móvil del Admin -->
+<header th:fragment="topbar(titulo, activo)" class="lg:hidden sticky top-0 z-40 bg-inverse-surface text-white px-margin-mobile py-4 flex items-center justify-between">
+    <a th:href="@{/}" class="flex items-center">
+        <img th:src="@{/img/logo_SaborMilagroso_sinFondo.png}" alt="Sabor Milagroso" class="h-9 w-auto object-contain"/>
+    </a>
+    <h1 class="font-headline-sm text-headline-sm text-white" th:text="${titulo}">Sección</h1>
+    <button id="admin-menu-toggle" aria-label="Abrir menú" class="p-2 rounded-full text-white/80 hover:text-white">
+        <span class="material-symbols-outlined">menu</span>
+    </button>
+</header>
+
+<!-- Menú móvil desplegable del Admin -->
+<nav th:fragment="mobile-nav(activo)" id="admin-mobile-menu" class="lg:hidden hidden bg-inverse-surface text-white px-margin-mobile py-4 space-y-1">
+    <a th:href="@{/admin}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-white/80 hover:bg-white/10">Dashboard</a>
+    <a th:href="@{/admin/pedidos}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-white/80 hover:bg-white/10">Pedidos</a>
+    <a th:href="@{/admin/productos}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-white/80 hover:bg-white/10">Productos</a>
+    <a th:href="@{/admin/categorias}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-white/80 hover:bg-white/10">Categorías</a>
+    <a th:href="@{/admin/promociones}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-white/80 hover:bg-white/10">Promociones</a>
+    <a th:href="@{/admin/usuarios}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-white/80 hover:bg-white/10">Usuarios</a>
+    <a th:href="@{/admin/reportes}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-white/80 hover:bg-white/10">Reportes</a>
+    <a th:href="@{/admin/configuracion}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-white/80 hover:bg-white/10">Configuración</a>
+    <a th:href="@{/admin/perfil}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-white/80 hover:bg-white/10">Mi perfil</a>
+    <hr class="border-white/10"/>
+    <a th:href="@{/}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-white/80 hover:bg-white/10">Ver tienda</a>
+    <a th:href="@{/login}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-error hover:bg-white/10">Cerrar sesión</a>
+</nav>
+
+</body>
+</html>

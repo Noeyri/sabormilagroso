@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${producto != null} ? 'Editar producto' : 'Nuevo producto')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<aside th:replace="~{fragments/admin-layout :: sidebar('productos')}"></aside>
+
+<div class="flex-1 min-w-0">
+    <header th:replace="~{fragments/admin-layout :: topbar(${producto != null} ? 'Editar producto' : 'Nuevo producto', 'productos')}"></header>
+    <nav th:replace="~{fragments/admin-layout :: mobile-nav('productos')}"></nav>
+
+    <main class="p-6 md:p-10 max-w-3xl mx-auto space-y-8">
+        <a th:href="@{/admin/productos}" class="hidden lg:inline-flex items-center gap-1 font-label-md text-label-md text-on-surface-variant hover:text-primary">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span> Volver a productos
+        </a>
+
+        <form th:attr="data-mock-submit=${producto != null ? 'Producto actualizado correctamente (modo demostración).' : 'Producto creado correctamente (modo demostración).'}"
+              class="bg-white rounded-xl border border-surface-variant p-6 md:p-8 space-y-6">
+            <h1 class="font-headline-md text-headline-md text-on-surface" th:text="${producto != null} ? 'Editar producto' : 'Nuevo producto'">Producto</h1>
+
+            <div>
+                <label class="font-label-md text-label-md text-on-surface block mb-2" for="nombre">Nombre del plato</label>
+                <input id="nombre" name="nombre" type="text" required="required" th:value="${producto != null ? producto.nombre : ''}" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="Ej. Ceviche Clásico"/>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="font-label-md text-label-md text-on-surface block mb-2" for="categoria">Categoría</label>
+                    <select id="categoria" name="categoria" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md">
+                        <option th:each="c : ${categorias}" th:text="${c.nombre}" th:selected="${producto != null and producto.categoria == c.nombre}">Categoría</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="font-label-md text-label-md text-on-surface block mb-2" for="precio">Precio (S/)</label>
+                    <input id="precio" name="precio" type="number" step="0.10" min="0" required="required" th:value="${producto != null ? producto.precio : ''}" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="0.00"/>
+                </div>
+            </div>
+
+            <div>
+                <label class="font-label-md text-label-md text-on-surface block mb-2" for="descripcion">Descripción corta</label>
+                <textarea id="descripcion" name="descripcion" rows="3" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="Descripción breve para las tarjetas del menú" th:text="${producto != null ? producto.descripcion : ''}"></textarea>
+            </div>
+
+            <div>
+                <label class="font-label-md text-label-md text-on-surface block mb-2" for="descripcion-larga">Descripción completa</label>
+                <textarea id="descripcion-larga" name="descripcionLarga" rows="4" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="Descripción detallada para la página de producto" th:text="${producto != null ? producto.descripcionLarga : ''}"></textarea>
+            </div>
+
+            <div>
+                <label class="font-label-md text-label-md text-on-surface block mb-2" for="imagen">Imagen del plato</label>
+                <div class="flex items-center gap-4">
+                    <img th:if="${producto != null}" class="w-20 h-20 rounded-lg object-cover" th:src="${producto.imagenUrl}" alt="Vista previa"/>
+                    <input id="imagen" name="imagen" type="file" accept="image/*" class="flex-grow text-body-md font-body-md text-on-surface-variant file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:bg-primary-fixed file:text-on-primary-fixed file:font-label-md file:text-label-md hover:file:bg-primary-fixed-dim"/>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <label class="flex items-center gap-2 font-body-md text-body-md text-on-surface-variant">
+                    <input type="checkbox" th:checked="${producto != null and producto.popular}" class="rounded border-outline-variant text-primary focus:ring-primary"/> Marcar como popular
+                </label>
+                <label class="flex items-center gap-2 font-body-md text-body-md text-on-surface-variant">
+                    <input type="checkbox" th:checked="${producto != null and producto.recomendado}" class="rounded border-outline-variant text-primary focus:ring-primary"/> Marcar como recomendado
+                </label>
+            </div>
+
+            <div class="flex gap-4 pt-4 border-t border-outline-variant">
+                <button type="submit" class="bg-primary text-on-primary font-label-md text-label-md px-8 py-3 rounded-full hover:bg-hover-orange transition-colors duration-300">
+                    <span th:text="${producto != null} ? 'Guardar cambios' : 'Crear producto'">Guardar</span>
+                </button>
+                <a th:href="@{/admin/productos}" class="border-2 border-outline text-on-surface font-label-md text-label-md px-8 py-3 rounded-full hover:bg-surface-container-high transition-colors duration-300 flex items-center">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </main>
+</div>
+
+</body>
+</html>

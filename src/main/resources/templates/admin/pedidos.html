@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Pedidos')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<aside th:replace="~{fragments/admin-layout :: sidebar('pedidos')}"></aside>
+
+<div class="flex-1 min-w-0">
+    <header th:replace="~{fragments/admin-layout :: topbar('Pedidos', 'pedidos')}"></header>
+    <nav th:replace="~{fragments/admin-layout :: mobile-nav('pedidos')}"></nav>
+
+    <main class="p-6 md:p-10 max-w-6xl mx-auto space-y-8">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <h1 class="hidden lg:block font-headline-lg text-headline-lg text-on-surface">Pedidos</h1>
+            <div class="flex gap-2 overflow-x-auto scrollbar-hide">
+                <button class="px-4 py-2 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md whitespace-nowrap">Todos</button>
+                <button class="px-4 py-2 rounded-full bg-white border border-outline-variant text-on-surface-variant font-label-md text-label-md whitespace-nowrap hover:bg-surface-container-low">En preparación</button>
+                <button class="px-4 py-2 rounded-full bg-white border border-outline-variant text-on-surface-variant font-label-md text-label-md whitespace-nowrap hover:bg-surface-container-low">En camino</button>
+                <button class="px-4 py-2 rounded-full bg-white border border-outline-variant text-on-surface-variant font-label-md text-label-md whitespace-nowrap hover:bg-surface-container-low">Entregado</button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-surface-variant overflow-x-auto">
+            <table class="w-full text-left min-w-[640px]">
+                <thead class="bg-surface-container-low">
+                    <tr>
+                        <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Código</th>
+                        <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Fecha</th>
+                        <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Productos</th>
+                        <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Estado</th>
+                        <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant text-right">Total</th>
+                        <th class="px-5 py-3"></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-outline-variant">
+                    <tr th:each="p : ${pedidos}" class="hover:bg-surface-container-low">
+                        <td class="px-5 py-4 font-label-md text-label-md text-on-surface" th:text="${p.codigo}">SM-0000</td>
+                        <td class="px-5 py-4 font-body-md text-body-md text-on-surface-variant" th:text="${p.fecha}">Fecha</td>
+                        <td class="px-5 py-4 font-body-md text-body-md text-on-surface-variant" th:text="${p.cantidadItems} + ' und.'">0 und.</td>
+                        <td class="px-5 py-4">
+                            <span class="font-label-sm text-label-sm px-3 py-1 rounded-full"
+                                  th:classappend="${p.estado == 'Entregado'} ? 'bg-success-green/15 text-success-green' : (${p.estado == 'Cancelado'} ? 'bg-error-container text-on-error-container' : 'bg-tertiary-fixed text-on-tertiary-fixed-variant')"
+                                  th:text="${p.estado}">Estado</span>
+                        </td>
+                        <td class="px-5 py-4 font-label-md text-label-md text-on-surface text-right" th:text="'S/ ' + ${#numbers.formatDecimal(p.total, 1, 2)}">S/ 0.00</td>
+                        <td class="px-5 py-4 text-right">
+                            <a th:href="@{/admin/pedidos/{id}(id=${p.id})}" class="font-label-md text-label-md text-primary hover:text-hover-orange">Ver</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

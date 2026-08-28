@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Categorías')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<aside th:replace="~{fragments/admin-layout :: sidebar('categorias')}"></aside>
+
+<div class="flex-1 min-w-0">
+    <header th:replace="~{fragments/admin-layout :: topbar('Categorías', 'categorias')}"></header>
+    <nav th:replace="~{fragments/admin-layout :: mobile-nav('categorias')}"></nav>
+
+    <main class="p-6 md:p-10 max-w-5xl mx-auto space-y-8">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <h1 class="hidden lg:block font-headline-lg text-headline-lg text-on-surface">Categorías</h1>
+            <button type="button" class="inline-flex items-center gap-2 bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-full hover:bg-hover-orange transition-colors duration-300" th:onclick="|showToast('Nueva categoría creada (modo demostración).')|">
+                <span class="material-symbols-outlined text-[18px]">add</span> Nueva categoría
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div th:each="c : ${categorias}" class="bg-white rounded-xl border border-surface-variant p-6 space-y-3">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-[28px]">category</span>
+                        <h3 class="font-headline-sm text-headline-sm text-on-surface" th:text="${c.nombre}">Categoría</h3>
+                    </div>
+                    <span class="font-label-sm text-label-sm px-3 py-1 rounded-full"
+                          th:classappend="${c.activa} ? 'bg-success-green/15 text-success-green' : 'bg-surface-variant text-on-surface-variant'"
+                          th:text="${c.activa} ? 'Activa' : 'Inactiva'">Estado</span>
+                </div>
+                <p class="font-body-md text-body-md text-on-surface-variant" th:text="${c.descripcion}">Descripción</p>
+                <p class="font-label-sm text-label-sm text-on-surface-variant" th:text="${c.cantidadProductos} + ' producto(s)'">0 productos</p>
+                <div class="flex gap-4 pt-2 border-t border-outline-variant">
+                    <button type="button" class="font-label-md text-label-md text-primary hover:text-hover-orange" th:onclick="|showToast('Edición de categoría (modo demostración).')|">Editar</button>
+                    <button type="button" class="font-label-md text-label-md text-error hover:text-error/80" th:onclick="|showToast('Categoría eliminada (modo demostración).')|">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

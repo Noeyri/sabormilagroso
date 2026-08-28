@@ -1,9 +1,11 @@
 package comsabormilagroso.mock;
 
+import comsabormilagroso.dto.CategoriaAdminDTO;
 import comsabormilagroso.dto.DireccionDTO;
 import comsabormilagroso.dto.ItemPedidoDTO;
 import comsabormilagroso.dto.PedidoDTO;
 import comsabormilagroso.dto.ProductoDTO;
+import comsabormilagroso.dto.UsuarioAdminDTO;
 import comsabormilagroso.dto.UsuarioClienteDTO;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +28,10 @@ public class MockDataProvider {
     private final List<PedidoDTO> pedidos = new ArrayList<>();
     private final List<DireccionDTO> direcciones = new ArrayList<>();
     private final List<Long> favoritosIds = new ArrayList<>();
+    private final List<UsuarioAdminDTO> usuariosSistema = new ArrayList<>();
+    private final List<CategoriaAdminDTO> categoriasAdmin = new ArrayList<>();
     private UsuarioClienteDTO usuarioCliente;
+    private UsuarioAdminDTO usuarioAdmin;
 
     public MockDataProvider() {
         productos.add(new ProductoDTO(1L, "Ceviche Clásico", "Platos criollos",
@@ -46,11 +51,11 @@ public class MockDataProvider {
                 true, false, 4.9, 35));
 
         productos.add(new ProductoDTO(3L, "Lomo Saltado Tradicional", "Platos criollos",
-                "Trozos de lomo fino salteados al wok con cebolla, tomate y ají amarillo, papas fritas y arroz.",
+                "Lomo fino salteado al wok con cebolla, tomate y ají amarillo, papas fritas y arroz.",
                 "Trozos de lomo fino salteados al wok a fuego alto con cebolla roja, tomate, ají amarillo y sillao. " +
                         "Servido con crujientes papas amarillas fritas y arroz blanco graneado. El plato bandera de la " +
                         "cocina chifa-criolla peruana.",
-                48.00, null, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxMp-JpDg_8eBIAmXrJKx9xYfRAcyd0OOGPY4oatlsmU_pnCKg6RYJ64o&s=10",
+                48.00, null, "https://static.wixstatic.com/media/9755d8_b2d98eade0814b17a67fdf7d95888fdc~mv2.png/v1/fill/w_980,h_551,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/9755d8_b2d98eade0814b17a67fdf7d95888fdc~mv2.png",
                 false, true, 4.7, 25));
 
         productos.add(new ProductoDTO(4L, "Ají de Gallina", "Platos criollos",
@@ -74,6 +79,43 @@ public class MockDataProvider {
                         "yemas de huevo, coronado con un delicado merengue italiano perfumado con oporto.",
                 18.00, null, "https://lh3.googleusercontent.com/aida-public/AB6AXuBrVJxyv2HNNPCqUaAHabY4hyYqjsib5kd_1X9qKr-esgvqSbj3h0D7qjBGZeIPwTOScYEx8jXWq2BrtKDMADBKCAG2cHyMXKQf4mc1pPfnbU1OBV7rhw9RQjqqOHc4giq6xl8COF6olUW7i52oZ-0e9sC3dZ7oYZ5MBjSU-BjJ6wNpPD6hzapZTinzQZ77eIsXEl4chk30pfqe2WcX8rTxbB5Dm9-6x--66DvT7MHSC7dIl6Q_iuzZ",
                 false, false, 4.4, 10));
+
+        // --- NUEVOS PRODUCTOS AÑADIDOS (Carnes, Alitas, Parrillas, Promociones) ---
+        productos.add(new ProductoDTO(7L, "Alitas BBQ (12 unds)", "Alitas",
+                "Jugosas alitas bañadas en salsa BBQ artesanal, con papas fritas.",
+                "Doce piezas de alitas de pollo fritas hasta quedar súper crujientes, bañadas en nuestra salsa BBQ secreta de la casa. Acompañadas de papas fritas, bastones de apio y salsa blue cheese.",
+                25.00, 32.00, "https://images.unsplash.com/photo-1608039829572-78524f79c4c7?auto=format&fit=crop&q=80&w=800",
+                true, true, 4.8, 20));
+
+        productos.add(new ProductoDTO(8L, "Parrilla Mixta Sabor Milagroso", "Parrillas",
+                "Selección premium de carnes, pollo, chorizos y anticuchos a la parrilla.",
+                "Ideal para compartir. Incluye 2 filetes de pechuga, 2 chuletas de cerdo, 2 chorizos finas hierbas, 2 palitos de anticucho, porción de papas doradas, choclo tierno y ensalada parrillera.",
+                85.00, null, "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&q=80&w=800",
+                false, true, 4.9, 45));
+
+        productos.add(new ProductoDTO(9L, "Bife Ancho a la Parrilla (350g)", "Carnes",
+                "Corte premium de res a la parrilla con guarnición a elegir.",
+                "Corte premium de 350g de bife ancho, extremadamente jugoso y tierno, asado a la parrilla en su punto ideal. Servido con papas fritas rústicas o ensalada fresca y chimichurri casero.",
+                55.00, null, "https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&q=80&w=800",
+                false, false, 4.7, 30));
+
+        productos.add(new ProductoDTO(10L, "Chilcano de Maracuyá", "Tragos",
+                "Refrescante cóctel de pisco, zumo de maracuyá y ginger ale.",
+                "El clásico chilcano peruano con un toque tropical. Pisco quebranta, zumo fresco de maracuyá, ginger ale, gotas de amargo de angostura y abundante hielo.",
+                22.00, 26.00, "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?auto=format&fit=crop&q=80&w=800",
+                true, false, 4.6, 5));
+
+        productos.add(new ProductoDTO(11L, "Alitas Buffalo Picantes", "Alitas",
+                "Alitas crujientes bañadas en auténtica salsa Buffalo picante.",
+                "Diez piezas de alitas fritas, cubiertas con auténtica salsa Buffalo ligeramente picante. Ideal para los amantes de los sabores intensos. Incluye salsa ranch y vegetales.",
+                26.00, null, "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&q=80&w=800",
+                false, false, 4.5, 20));
+
+        productos.add(new ProductoDTO(12L, "Limonada Frozen con Menta", "Bebidas",
+                "Limonada frozen licuada con hojas de menta fresca.",
+                "Bebida súper refrescante preparada con zumo de limón recién exprimido, hielo triturado estilo frozen, jarabe de goma y hojas de menta fresca.",
+                12.00, 15.00, "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&q=80&w=800",
+                false, false, 4.7, 5));
 
         // --- Usuario cliente (mock, sin autenticación real todavía) ---
         usuarioCliente = new UsuarioClienteDTO("Rosa Mendoza", "rosa.mendoza@example.com",
@@ -110,6 +152,30 @@ public class MockDataProvider {
                         new ItemPedidoDTO(3L, "Lomo Saltado Tradicional", productos.get(2).getImagenUrl(), 1, 48.00),
                         new ItemPedidoDTO(6L, "Suspiro a la Limeña", productos.get(5).getImagenUrl(), 2, 18.00)
                 )));
+
+        // --- Usuario administrador (mock, sin autenticación real todavía) ---
+        usuarioAdmin = new UsuarioAdminDTO(1L, "Carlos Ríos", "carlos.rios@sabormilagroso.com",
+                "Administrador", "Activo", "Enero 2024", 0);
+
+        // --- Usuarios del sistema (mock, para la sección Usuarios del Admin) ---
+        usuariosSistema.add(new UsuarioAdminDTO(101L, "Rosa Mendoza", "rosa.mendoza@example.com",
+                "Cliente", "Activo", "Marzo 2024", 3));
+        usuariosSistema.add(new UsuarioAdminDTO(102L, "Jorge Huamán", "jorge.huaman@example.com",
+                "Cliente", "Activo", "Mayo 2024", 7));
+        usuariosSistema.add(new UsuarioAdminDTO(103L, "Lucía Fernández", "lucia.fernandez@example.com",
+                "Cliente", "Inactivo", "Julio 2024", 1));
+        usuariosSistema.add(new UsuarioAdminDTO(104L, "Miguel Torres", "miguel.torres@example.com",
+                "Cliente", "Activo", "Agosto 2025", 12));
+        usuariosSistema.add(new UsuarioAdminDTO(1L, "Carlos Ríos", "carlos.rios@sabormilagroso.com",
+                "Administrador", "Activo", "Enero 2024", 0));
+
+        // --- Categorías (mock, para la sección Categorías del Admin) ---
+        categoriasAdmin.add(new CategoriaAdminDTO(1L, "Platos criollos", "Platos tradicionales de la costa peruana", 3, true));
+        categoriasAdmin.add(new CategoriaAdminDTO(2L, "Pollo a la brasa", "Pollo asado a la leña y acompañamientos", 1, true));
+        categoriasAdmin.add(new CategoriaAdminDTO(3L, "Ceviches", "Pescados y mariscos marinados en cítricos", 0, true));
+        categoriasAdmin.add(new CategoriaAdminDTO(4L, "Parrillas", "Carnes a la parrilla y anticuchos", 0, true));
+        categoriasAdmin.add(new CategoriaAdminDTO(5L, "Postres", "Dulces tradicionales peruanos", 1, true));
+        categoriasAdmin.add(new CategoriaAdminDTO(6L, "Bebidas", "Cócteles, jugos y refrescos", 1, false));
     }
 
     public List<ProductoDTO> obtenerTodos() {
@@ -129,7 +195,7 @@ public class MockDataProvider {
     }
 
     public List<String> obtenerCategorias() {
-        return List.of("Criollos", "Ceviches", "Pollo a la brasa", "Parrillas", "Postres", "Bebidas");
+        return List.of("Criollos", "Ceviches", "Pollo a la brasa", "Parrillas", "Carnes", "Alitas", "Postres", "Bebidas", "Tragos");
     }
 
     // ---------------------------------------------------------------
@@ -166,5 +232,42 @@ public class MockDataProvider {
                 new ItemPedidoDTO(2L, "Pollo a la Brasa Entero", productos.get(1).getImagenUrl(), 1, 65.00),
                 new ItemPedidoDTO(6L, "Suspiro a la Limeña", productos.get(5).getImagenUrl(), 2, 18.00)
         ));
+    }
+
+    // ---------------------------------------------------------------
+    // Datos mock del PANEL ADMINISTRADOR (Fase 3)
+    // ---------------------------------------------------------------
+
+    public UsuarioAdminDTO obtenerUsuarioAdmin() {
+        return usuarioAdmin;
+    }
+
+    /**
+     * Reutiliza la misma lista de pedidos del área Cliente: en esta fase mock
+     * representan "todos los pedidos del sistema" tal como los vería el Admin.
+     */
+    public List<PedidoDTO> obtenerPedidosAdmin() {
+        return pedidos;
+    }
+
+    public List<UsuarioAdminDTO> obtenerUsuariosSistema() {
+        return usuariosSistema;
+    }
+
+    public List<CategoriaAdminDTO> obtenerCategoriasAdmin() {
+        return categoriasAdmin;
+    }
+
+    /**
+     * Métricas simples calculadas a partir de los datos mock existentes,
+     * usadas en el Dashboard y Reportes del Admin. En Fase 4 se calcularán
+     * con consultas reales a la base de datos.
+     */
+    public double obtenerVentasTotales() {
+        return pedidos.stream().mapToDouble(PedidoDTO::getTotal).sum();
+    }
+
+    public long obtenerPedidosPendientes() {
+        return pedidos.stream().filter(p -> !p.getEstado().equals("Entregado") && !p.getEstado().equals("Cancelado")).count();
     }
 }

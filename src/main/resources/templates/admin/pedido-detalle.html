@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Pedido ' + ${pedido.codigo})}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<aside th:replace="~{fragments/admin-layout :: sidebar('pedidos')}"></aside>
+
+<div class="flex-1 min-w-0">
+    <header th:replace="~{fragments/admin-layout :: topbar('Detalle de pedido', 'pedidos')}"></header>
+    <nav th:replace="~{fragments/admin-layout :: mobile-nav('pedidos')}"></nav>
+
+    <main class="p-6 md:p-10 max-w-4xl mx-auto space-y-8">
+        <a th:href="@{/admin/pedidos}" class="hidden lg:inline-flex items-center gap-1 font-label-md text-label-md text-on-surface-variant hover:text-primary">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span> Volver a pedidos
+        </a>
+
+        <div class="bg-white rounded-xl border border-surface-variant p-6 md:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h1 class="font-headline-md text-headline-md text-on-surface" th:text="'Pedido ' + ${pedido.codigo}">Pedido</h1>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant" th:text="${pedido.fecha}">Fecha</p>
+                </div>
+
+                <!-- Cambiar estado (mock) -->
+                <div class="flex items-center gap-3">
+                    <select class="px-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest font-label-md text-label-md text-on-surface outline-none" onchange="showToast('Estado del pedido actualizado (modo demostración).')">
+                        <option th:selected="${pedido.estado == 'En preparación'}">En preparación</option>
+                        <option th:selected="${pedido.estado == 'En camino'}">En camino</option>
+                        <option th:selected="${pedido.estado == 'Entregado'}">Entregado</option>
+                        <option th:selected="${pedido.estado == 'Cancelado'}">Cancelado</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Items -->
+            <div class="divide-y divide-outline-variant border-t border-b border-outline-variant">
+                <div th:each="item : ${pedido.items}" class="flex items-center gap-4 py-4">
+                    <img class="w-16 h-16 rounded-lg object-cover" th:src="${item.imagenUrl}" th:alt="${item.nombre}"/>
+                    <div class="flex-grow">
+                        <p class="font-label-md text-label-md text-on-surface" th:text="${item.nombre}">Producto</p>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant" th:text="'x' + ${item.cantidad}">x1</p>
+                    </div>
+                    <span class="font-label-md text-label-md text-on-surface" th:text="'S/ ' + ${#numbers.formatDecimal(item.subtotal, 1, 2)}">S/ 0.00</span>
+                </div>
+            </div>
+
+            <!-- Totales -->
+            <div class="space-y-2">
+                <div class="flex justify-between font-body-md text-body-md text-on-surface-variant">
+                    <span>Subtotal</span>
+                    <span th:text="'S/ ' + ${#numbers.formatDecimal(pedido.subtotal, 1, 2)}">S/ 0.00</span>
+                </div>
+                <div class="flex justify-between font-body-md text-body-md text-on-surface-variant">
+                    <span>Envío</span>
+                    <span th:text="'S/ ' + ${#numbers.formatDecimal(pedido.envio, 1, 2)}">S/ 0.00</span>
+                </div>
+                <div class="flex justify-between font-headline-sm text-headline-sm text-on-surface pt-2 border-t border-outline-variant">
+                    <span>Total</span>
+                    <span th:text="'S/ ' + ${#numbers.formatDecimal(pedido.total, 1, 2)}">S/ 0.00</span>
+                </div>
+            </div>
+
+            <!-- Datos de entrega -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-outline-variant">
+                <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary">location_on</span>
+                    <div>
+                        <p class="font-label-md text-label-md text-on-surface">Dirección de entrega</p>
+                        <p class="font-body-md text-body-md text-on-surface-variant" th:text="${pedido.direccionEntrega}">Dirección</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary">credit_card</span>
+                    <div>
+                        <p class="font-label-md text-label-md text-on-surface">Método de pago</p>
+                        <p class="font-body-md text-body-md text-on-surface-variant" th:text="${pedido.metodoPago}">Método</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

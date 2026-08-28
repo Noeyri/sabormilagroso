@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Reportes')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<aside th:replace="~{fragments/admin-layout :: sidebar('reportes')}"></aside>
+
+<div class="flex-1 min-w-0">
+    <header th:replace="~{fragments/admin-layout :: topbar('Reportes', 'reportes')}"></header>
+    <nav th:replace="~{fragments/admin-layout :: mobile-nav('reportes')}"></nav>
+
+    <main class="p-6 md:p-10 max-w-6xl mx-auto space-y-8">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <h1 class="hidden lg:block font-headline-lg text-headline-lg text-on-surface">Reportes</h1>
+            <select class="px-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest font-label-md text-label-md text-on-surface outline-none">
+                <option>Últimos 7 días</option>
+                <option>Últimos 30 días</option>
+                <option>Este año</option>
+            </select>
+        </div>
+
+        <!-- Métricas -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-xl border border-surface-variant space-y-2">
+                <span class="material-symbols-outlined text-primary text-[28px]">payments</span>
+                <p class="font-headline-md text-headline-md text-on-surface" th:text="'S/ ' + ${#numbers.formatDecimal(ventasTotales, 1, 2)}">S/ 0.00</p>
+                <p class="font-label-sm text-label-sm text-on-surface-variant">Ingresos totales</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-surface-variant space-y-2">
+                <span class="material-symbols-outlined text-tertiary text-[28px]">receipt_long</span>
+                <p class="font-headline-md text-headline-md text-on-surface" th:text="${#lists.size(pedidos)}">0</p>
+                <p class="font-label-sm text-label-sm text-on-surface-variant">Pedidos procesados</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-surface-variant space-y-2">
+                <span class="material-symbols-outlined text-secondary text-[28px]">group</span>
+                <p class="font-headline-md text-headline-md text-on-surface" th:text="${#lists.size(usuarios)}">0</p>
+                <p class="font-label-sm text-label-sm text-on-surface-variant">Clientes activos</p>
+            </div>
+        </div>
+
+        <!-- Placeholder de gráfico de ventas -->
+        <div class="bg-white rounded-xl border border-surface-variant p-6 space-y-4">
+            <h2 class="font-headline-sm text-headline-sm text-on-surface">Ventas por día</h2>
+            <div class="h-64 flex items-end gap-3 px-2">
+                <div class="flex-1 bg-primary-fixed rounded-t-lg" style="height: 45%"></div>
+                <div class="flex-1 bg-primary-fixed rounded-t-lg" style="height: 65%"></div>
+                <div class="flex-1 bg-primary-fixed rounded-t-lg" style="height: 40%"></div>
+                <div class="flex-1 bg-primary rounded-t-lg" style="height: 85%"></div>
+                <div class="flex-1 bg-primary-fixed rounded-t-lg" style="height: 55%"></div>
+                <div class="flex-1 bg-primary-fixed rounded-t-lg" style="height: 70%"></div>
+                <div class="flex-1 bg-primary-fixed rounded-t-lg" style="height: 50%"></div>
+            </div>
+            <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant px-2">
+                <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
+            </div>
+            <p class="font-label-sm text-label-sm text-on-surface-variant text-center pt-2">Gráfico ilustrativo con datos de ejemplo — se conectará a datos reales en la Fase 4.</p>
+        </div>
+
+        <!-- Productos más vendidos -->
+        <div class="bg-white rounded-xl border border-surface-variant p-6 space-y-4">
+            <h2 class="font-headline-sm text-headline-sm text-on-surface">Productos más vendidos</h2>
+            <div class="space-y-3">
+                <div th:each="p, iter : ${productos}" th:if="${iter.index < 5}" class="flex items-center gap-4">
+                    <span class="w-6 font-label-md text-label-md text-on-surface-variant" th:text="${iter.index + 1}">1</span>
+                    <img class="w-10 h-10 rounded-lg object-cover" th:src="${p.imagenUrl}" th:alt="${p.nombre}"/>
+                    <span class="flex-grow font-body-md text-body-md text-on-surface" th:text="${p.nombre}">Plato</span>
+                    <span class="font-label-md text-label-md text-on-surface-variant" th:text="${p.calificacion} + ' ★'">4.8 ★</span>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

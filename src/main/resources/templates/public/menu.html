@@ -15,26 +15,26 @@
         </p>
     </section>
 
-    <!-- Buscador y filtros (visual, sin lógica de backend aún) -->
+    <!-- Buscador y filtros interactivos -->
     <section class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto mb-10">
         <div class="bg-surface/90 border border-outline-variant p-4 rounded-xl shadow-sm flex flex-col xl:flex-row gap-4 items-center justify-between">
             <div class="relative w-full xl:w-80">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
-                <input class="w-full pl-12 pr-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-body-md text-on-surface outline-none transition-all" placeholder="Buscar platillos, ingredientes..." type="text"/>
+                <input id="searchInput" class="w-full pl-12 pr-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-body-md text-on-surface outline-none transition-all" placeholder="Buscar platillos, ingredientes..." type="text"/>
             </div>
             <div class="w-full xl:flex-1 overflow-x-auto scrollbar-hide">
-                <div class="flex gap-2 min-w-max pb-1">
-                    <button class="px-4 py-2 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md shadow-sm">Todos</button>
-                    <button th:each="cat : ${categorias}" class="px-4 py-2 rounded-full bg-surface-container-lowest border border-outline-variant text-on-surface-variant hover:bg-secondary-container hover:text-on-secondary-container hover:border-transparent font-label-md text-label-md transition-all" th:text="${cat}">Categoría</button>
+                <div class="flex gap-2 min-w-max pb-1" id="categoryContainer">
+                    <button class="btn-categoria px-4 py-2 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md shadow-sm transition-all" data-categoria="Todos">Todos</button>
+                    <button th:each="cat : ${categorias}" class="btn-categoria px-4 py-2 rounded-full bg-surface-container-lowest border border-outline-variant text-on-surface-variant hover:bg-secondary-container hover:text-on-secondary-container hover:border-transparent font-label-md text-label-md transition-all" th:data-categoria="${cat}" th:text="${cat}">Categoría</button>
                 </div>
             </div>
             <div class="flex gap-3 w-full xl:w-auto">
-                <div class="relative flex-1 xl:w-44">
-                    <select class="w-full appearance-none pl-4 pr-10 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest font-label-md text-label-md text-on-surface cursor-pointer outline-none">
-                        <option>Ordenar por: Relevancia</option>
-                        <option>Menor precio</option>
-                        <option>Mayor precio</option>
-                        <option>Más populares</option>
+                <div class="relative flex-1 xl:w-48">
+                    <select id="sortSelect" class="w-full appearance-none pl-4 pr-10 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest font-label-md text-label-md text-on-surface cursor-pointer outline-none">
+                        <option value="relevancia">Ordenar por: Relevancia</option>
+                        <option value="precio_asc">Menor precio</option>
+                        <option value="precio_desc">Mayor precio</option>
+                        <option value="popular">Más populares</option>
                     </select>
                     <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
                 </div>
@@ -42,10 +42,20 @@
         </div>
     </section>
 
-    <!-- Grilla de productos -->
+    <!-- Mensaje cuando no hay resultados -->
+    <div id="noResultsMessage" class="hidden text-center py-12">
+        <p class="font-body-lg text-on-surface-variant">No se encontraron platillos que coincidan con tu búsqueda.</p>
+    </div>
+
+    <!-- Grilla de productos (Con Thymeleaf y atributos para filtrado) -->
     <section class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
-            <article th:each="p : ${productos}" class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col group border border-surface-container-highest">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8" id="menuGrid">
+            <article th:each="p : ${productos}"
+                     class="producto-item bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col group border border-surface-container-highest"
+                     th:data-categoria="${p.categoria}"
+                     th:data-precio="${p.precio}"
+                     th:data-nombre="${p.nombre}"
+                     th:data-popular="${p.popular ? 'true' : 'false'}">
                 <div class="h-56 relative overflow-hidden bg-surface-container-low">
                     <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" th:src="${p.imagenUrl}" th:alt="${p.nombre}"/>
                     <div class="absolute top-4 left-4 flex gap-2">

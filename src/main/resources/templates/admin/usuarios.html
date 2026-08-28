@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Usuarios')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<aside th:replace="~{fragments/admin-layout :: sidebar('usuarios')}"></aside>
+
+<div class="flex-1 min-w-0">
+    <header th:replace="~{fragments/admin-layout :: topbar('Usuarios', 'usuarios')}"></header>
+    <nav th:replace="~{fragments/admin-layout :: mobile-nav('usuarios')}"></nav>
+
+    <main class="p-6 md:p-10 max-w-6xl mx-auto space-y-8">
+        <h1 class="hidden lg:block font-headline-lg text-headline-lg text-on-surface">Usuarios</h1>
+
+        <div class="bg-surface/90 border border-outline-variant p-4 rounded-xl flex flex-col md:flex-row gap-4">
+            <div class="relative flex-1">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+                <input class="w-full pl-12 pr-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-body-md outline-none" placeholder="Buscar por nombre o correo..." type="text"/>
+            </div>
+            <select class="px-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest font-label-md text-label-md text-on-surface outline-none">
+                <option>Todos los roles</option>
+                <option>Cliente</option>
+                <option>Administrador</option>
+            </select>
+        </div>
+
+        <div class="bg-white rounded-xl border border-surface-variant overflow-x-auto">
+            <table class="w-full text-left min-w-[720px]">
+                <thead class="bg-surface-container-low">
+                    <tr>
+                        <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Usuario</th>
+                        <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Rol</th>
+                        <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Registrado</th>
+                        <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Pedidos</th>
+                        <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Estado</th>
+                        <th class="px-5 py-3"></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-outline-variant">
+                    <tr th:each="u : ${usuarios}" class="hover:bg-surface-container-low">
+                        <td class="px-5 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-label-sm text-label-sm" th:text="${u.iniciales}">SM</div>
+                                <div class="min-w-0">
+                                    <p class="font-label-md text-label-md text-on-surface truncate" th:text="${u.nombre}">Nombre</p>
+                                    <p class="font-label-sm text-label-sm text-on-surface-variant truncate" th:text="${u.email}">correo@ejemplo.com</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-5 py-4 font-body-md text-body-md text-on-surface-variant" th:text="${u.rol}">Rol</td>
+                        <td class="px-5 py-4 font-body-md text-body-md text-on-surface-variant" th:text="${u.fechaRegistro}">Fecha</td>
+                        <td class="px-5 py-4 font-body-md text-body-md text-on-surface-variant" th:text="${u.pedidosRealizados}">0</td>
+                        <td class="px-5 py-4">
+                            <span class="font-label-sm text-label-sm px-3 py-1 rounded-full"
+                                  th:classappend="${u.estado == 'Activo'} ? 'bg-success-green/15 text-success-green' : 'bg-surface-variant text-on-surface-variant'"
+                                  th:text="${u.estado}">Estado</span>
+                        </td>
+                        <td class="px-5 py-4 text-right whitespace-nowrap">
+                            <button type="button" class="font-label-md text-label-md text-primary hover:text-hover-orange" th:onclick="|showToast('Estado del usuario actualizado (modo demostración).')|">
+                                <span th:text="${u.estado == 'Activo'} ? 'Desactivar' : 'Activar'">Acción</span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

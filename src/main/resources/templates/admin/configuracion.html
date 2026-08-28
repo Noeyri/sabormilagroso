@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Configuración')}"></head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<aside th:replace="~{fragments/admin-layout :: sidebar('configuracion')}"></aside>
+
+<div class="flex-1 min-w-0">
+    <header th:replace="~{fragments/admin-layout :: topbar('Configuración', 'configuracion')}"></header>
+    <nav th:replace="~{fragments/admin-layout :: mobile-nav('configuracion')}"></nav>
+
+    <main class="p-6 md:p-10 max-w-3xl mx-auto space-y-8">
+        <h1 class="hidden lg:block font-headline-lg text-headline-lg text-on-surface">Configuración</h1>
+
+        <!-- Datos del negocio -->
+        <form data-mock-submit="Configuración guardada correctamente (modo demostración)." class="bg-white rounded-xl border border-surface-variant p-6 md:p-8 space-y-6">
+            <h2 class="font-headline-sm text-headline-sm text-on-surface">Datos del negocio</h2>
+
+            <div>
+                <label class="font-label-md text-label-md text-on-surface block mb-2" for="nombre-negocio">Nombre del restaurante</label>
+                <input id="nombre-negocio" name="nombreNegocio" type="text" value="Sabor Milagroso" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
+            </div>
+            <div>
+                <label class="font-label-md text-label-md text-on-surface block mb-2" for="direccion-negocio">Dirección</label>
+                <input id="direccion-negocio" name="direccionNegocio" type="text" value="Av. La Molina 123, Lima" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="font-label-md text-label-md text-on-surface block mb-2" for="telefono-negocio">Teléfono</label>
+                    <input id="telefono-negocio" name="telefonoNegocio" type="tel" value="+51 987 654 321" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
+                </div>
+                <div>
+                    <label class="font-label-md text-label-md text-on-surface block mb-2" for="costo-envio">Costo de envío (S/)</label>
+                    <input id="costo-envio" name="costoEnvio" type="number" step="0.10" min="0" value="8.00" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="font-label-md text-label-md text-on-surface block mb-2" for="hora-apertura">Hora de apertura</label>
+                    <input id="hora-apertura" name="horaApertura" type="time" value="11:00" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
+                </div>
+                <div>
+                    <label class="font-label-md text-label-md text-on-surface block mb-2" for="hora-cierre">Hora de cierre</label>
+                    <input id="hora-cierre" name="horaCierre" type="time" value="22:00" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
+                </div>
+            </div>
+
+            <button type="submit" class="bg-primary text-on-primary font-label-md text-label-md px-8 py-3 rounded-full hover:bg-hover-orange transition-colors duration-300">
+                Guardar cambios
+            </button>
+        </form>
+
+        <!-- Notificaciones -->
+        <div class="bg-white rounded-xl border border-surface-variant p-6 md:p-8 space-y-4">
+            <h2 class="font-headline-sm text-headline-sm text-on-surface">Notificaciones</h2>
+            <label class="flex items-center justify-between py-2">
+                <span class="font-body-md text-body-md text-on-surface">Recibir correo por cada nuevo pedido</span>
+                <input type="checkbox" checked="checked" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary"/>
+            </label>
+            <label class="flex items-center justify-between py-2">
+                <span class="font-body-md text-body-md text-on-surface">Alertas de stock bajo</span>
+                <input type="checkbox" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary"/>
+            </label>
+            <label class="flex items-center justify-between py-2">
+                <span class="font-body-md text-body-md text-on-surface">Resumen semanal de ventas</span>
+                <input type="checkbox" checked="checked" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary"/>
+            </label>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>
