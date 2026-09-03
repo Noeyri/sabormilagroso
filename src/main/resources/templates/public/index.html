@@ -7,28 +7,32 @@
 
 <main class="flex-grow page-content pb-24 space-y-24">
 
-    <!-- Hero Edge-to-Edge con Slider de 3 Videos de Cocina -->
-    <section class="relative w-full h-[500px] md:h-[750px] overflow-hidden bg-black flex items-center justify-center">
+    <!-- Hero con tus 3 videos locales en el fondo -->
+    <section class="relative w-full h-[550px] md:h-[750px] overflow-hidden bg-black flex items-center justify-center">
+        
+        <!-- Contenedor de 3 columnas con tus videos -->
+        <div class="absolute inset-0 grid grid-cols-1 md:grid-cols-3 w-full h-full z-0 opacity-75">
+            <div class="relative w-full h-full overflow-hidden bg-black">
+                <video autoplay muted loop playsinline preload="auto" class="absolute inset-0 w-full h-full object-cover">
+                    <source th:src="@{/videos/video1.mp4}" type="video/mp4">
+                </video>
+            </div>
+            <div class="relative w-full h-full overflow-hidden hidden md:block border-x border-white/15 bg-black">
+                <video autoplay muted loop playsinline preload="auto" class="absolute inset-0 w-full h-full object-cover">
+                    <source th:src="@{/videos/video2.mp4}" type="video/mp4">
+                </video>
+            </div>
+            <div class="relative w-full h-full overflow-hidden hidden md:block bg-black">
+                <video autoplay muted loop playsinline preload="auto" class="absolute inset-0 w-full h-full object-cover">
+                    <source th:src="@{/videos/video3.mp4}" type="video/mp4">
+                </video>
+            </div>
+        </div>
 
-        <!-- Video 1: Wok / Fuego (z-0) -->
-        <video class="hero-video absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-100 z-0" autoplay loop muted playsinline>
-            <source src="https://player.vimeo.com/external/435674703.sd.mp4?s=124614396ab9ba618d361c469b82142e032bda97&profile_id=164" type="video/mp4"/>
-        </video>
+        <!-- Overlay oscuro para contraste del texto -->
+        <div class="absolute inset-0 bg-black/65 z-10"></div>
 
-        <!-- Video 2: Preparación fresca (z-0) -->
-        <video class="hero-video absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0 z-0" autoplay loop muted playsinline>
-            <source src="https://player.vimeo.com/external/394628889.sd.mp4?s=d03e9cb190280ebdbecbe389814eb31599573887&profile_id=164" type="video/mp4"/>
-        </video>
-
-        <!-- Video 3: Servido / Mesa (z-0) -->
-        <video class="hero-video absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0 z-0" autoplay loop muted playsinline>
-            <source src="https://player.vimeo.com/external/394629471.sd.mp4?s=4a1c5d79383688190de62ef3ff5b3f71bc735db9&profile_id=164" type="video/mp4"/>
-        </video>
-
-        <!-- Overlay oscuro para garantizar la lectura del texto (z-10) -->
-        <div class="absolute inset-0 bg-black/50 z-10"></div>
-
-        <!-- Contenido del Hero (z-20) -->
+        <!-- Contenido Central Estático -->
         <div class="relative z-20 h-full flex flex-col items-center justify-center text-center max-w-4xl mx-auto px-6 space-y-6">
             <h1 class="font-headline-lg-mobile md:font-headline-xl text-4xl md:text-6xl text-white font-bold drop-shadow-lg tracking-wide">
                 El verdadero sabor del Perú
@@ -44,13 +48,6 @@
                     Conoce nuestra historia
                 </a>
             </div>
-        </div>
-
-        <!-- Indicadores (Dots) para control manual del slider (z-30) -->
-        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex space-x-4 z-30">
-            <button class="hero-dot w-3 h-3 md:w-4 md:h-4 rounded-full bg-primary shadow-md transition-all duration-300" onclick="changeVideo(0)" aria-label="Ver video 1"></button>
-            <button class="hero-dot w-3 h-3 md:w-4 md:h-4 rounded-full bg-white/50 hover:bg-white shadow-md transition-all duration-300" onclick="changeVideo(1)" aria-label="Ver video 2"></button>
-            <button class="hero-dot w-3 h-3 md:w-4 md:h-4 rounded-full bg-white/50 hover:bg-white shadow-md transition-all duration-300" onclick="changeVideo(2)" aria-label="Ver video 3"></button>
         </div>
     </section>
 
@@ -93,20 +90,20 @@
                 <span class="font-label-md text-label-md text-on-surface mt-3">Criollos</span>
             </a>
             <a th:href="@{/menu}" class="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-transparent hover:border-primary-fixed">
-                <span class="material-symbols-outlined text-[40px] text-tertiary">set_meal</span>
-                <span class="font-label-md text-label-md text-on-surface mt-3">Ceviches</span>
-            </a>
-            <a th:href="@{/menu}" class="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-transparent hover:border-primary-fixed">
                 <span class="material-symbols-outlined text-[40px] text-tertiary">outdoor_grill</span>
                 <span class="font-label-md text-label-md text-on-surface mt-3">Parrillas</span>
             </a>
             <a th:href="@{/menu}" class="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-transparent hover:border-primary-fixed">
                 <span class="material-symbols-outlined text-[40px] text-tertiary">fastfood</span>
-                <span class="font-label-md text-label-md text-on-surface mt-3">Pollo a la brasa</span>
+                <span class="font-label-md text-label-md text-on-surface mt-3">Brasas</span>
             </a>
             <a th:href="@{/menu}" class="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-transparent hover:border-primary-fixed">
-                <span class="material-symbols-outlined text-[40px] text-tertiary">icecream</span>
-                <span class="font-label-md text-label-md text-on-surface mt-3">Postres</span>
+                <span class="material-symbols-outlined text-[40px] text-tertiary">lunch_dining</span>
+                <span class="font-label-md text-label-md text-on-surface mt-3">Hamburguesas</span>
+            </a>
+            <a th:href="@{/menu}" class="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-transparent hover:border-primary-fixed">
+                <span class="material-symbols-outlined text-[40px] text-tertiary">tapas</span>
+                <span class="font-label-md text-label-md text-on-surface mt-3">Piqueos</span>
             </a>
             <a th:href="@{/menu}" class="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-transparent hover:border-primary-fixed">
                 <span class="material-symbols-outlined text-[40px] text-tertiary">local_bar</span>
@@ -132,7 +129,7 @@
             </div>
             <div class="relative h-[320px] md:h-[500px] rounded-2xl overflow-hidden shadow-sm">
                 <img class="w-full h-full object-cover" alt="Cocina de Sabor Milagroso"
-                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuAt2s_4QHzgwPGtS3rS-gRxn4Fr2oPiaRcUy_ex1mGbiEDggHpYWPZiGOpMoojX-KkIN_xzlXwF5vlIDZ6PlKbNYWAFpm5LQ2GOngGvp2Hy6FzJbC4M2rbEYBHyL9IJ7Sn4-1MxO01FbzH49emqayVi6sOsLfCip6e-Ov9aH4LPWz30IwQDig4e-nOIf60UVaC6ao5x5SQ0PbmZ7WCZvlUhM7wqLoNSwNDdDnMr8nJPGw9TCB1AWxwd"/>
+                     src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80"/>
             </div>
         </div>
     </section>
@@ -141,61 +138,14 @@
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 
-<!-- Lógica del Slider de Videos -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const videos = document.querySelectorAll('.hero-video');
-        const dots = document.querySelectorAll('.hero-dot');
-        let currentVideo = 0;
-        let videoInterval;
-
-        // Forzar la reproducción de los videos por si el navegador los bloquea
-        videos.forEach(vid => {
-            vid.play().catch(e => console.log("Autoplay prevenido por el navegador", e));
+    document.addEventListener('DOMContentLoaded', () => {
+        const backgroundVideos = document.querySelectorAll('video');
+        backgroundVideos.forEach(vid => {
+            vid.play().catch(err => {
+                console.log("Reproducción automática forzada:", err);
+            });
         });
-
-        // Función para cambiar de video
-        function showVideo(index) {
-            // Ocultar todos los videos y apagar los dots
-            videos.forEach(vid => {
-                vid.classList.remove('opacity-100');
-                vid.classList.add('opacity-0');
-            });
-            dots.forEach(dot => {
-                dot.classList.remove('bg-primary');
-                dot.classList.add('bg-white/50');
-            });
-
-            // Mostrar el video activo y encender su dot
-            videos[index].classList.remove('opacity-0');
-            videos[index].classList.add('opacity-100');
-            dots[index].classList.remove('bg-white/50');
-            dots[index].classList.add('bg-primary');
-            currentVideo = index;
-        }
-
-        // Función global para los botones
-        window.changeVideo = function(index) {
-            showVideo(index);
-            resetInterval();
-        };
-
-        // Avanzar al siguiente video automáticamente
-        function nextVideo() {
-            let next = (currentVideo + 1) % videos.length;
-            showVideo(next);
-        }
-
-        // Reiniciar el temporizador
-        function resetInterval() {
-            clearInterval(videoInterval);
-            videoInterval = setInterval(nextVideo, 6000); // Cambia cada 6 segundos
-        }
-
-        // Iniciar el carrusel
-        if (videos.length > 0) {
-            resetInterval();
-        }
     });
 </script>
 
