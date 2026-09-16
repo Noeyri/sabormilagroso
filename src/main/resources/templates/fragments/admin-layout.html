@@ -82,8 +82,7 @@
 </header>
 
 <!-- Menú móvil desplegable del Admin -->
-<nav th:fragment="mobile-nav(activo)" id="admin-mobile-menu" class="lg:hidden hidden bg-inverse-surface text-white px-margin-mobile py-4 space-y-1">
-    <a th:href="@{/admin}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-white/80 hover:bg-white/10">Dashboard</a>
+<nav th:fragment="mobile-nav(activo)" id="admin-mobile-menu" class="lg:hidden hidden fixed top-[72px] inset-x-0 z-40 max-h-[calc(100vh-72px)] overflow-y-auto bg-inverse-surface text-white px-margin-mobile py-4 space-y-1 shadow-lg">    <a th:href="@{/admin}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-white/80 hover:bg-white/10">Dashboard</a>
     <a th:href="@{/admin/pedidos}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-white/80 hover:bg-white/10">Pedidos</a>
     <a th:href="@{/admin/productos}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-white/80 hover:bg-white/10">Productos</a>
     <a th:href="@{/admin/categorias}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-white/80 hover:bg-white/10">Categorías</a>

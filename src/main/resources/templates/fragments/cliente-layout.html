@@ -70,8 +70,7 @@
 </header>
 
 <!-- Menú móvil desplegable del Cliente -->
-<nav th:fragment="mobile-nav(activo)" id="cliente-mobile-menu" class="lg:hidden hidden bg-white border-b border-outline-variant px-margin-mobile py-4 space-y-1">
-    <a th:href="@{/cliente}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low">Dashboard</a>
+<nav th:fragment="mobile-nav(activo)" id="cliente-mobile-menu" class="lg:hidden hidden fixed top-[72px] inset-x-0 z-40 max-h-[calc(100vh-72px)] overflow-y-auto bg-white border-b border-outline-variant px-margin-mobile py-4 space-y-1 shadow-lg">    <a th:href="@{/cliente}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low">Dashboard</a>
     <a th:href="@{/cliente/pedidos}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low">Mis pedidos</a>
     <a th:href="@{/carrito}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low">Carrito</a>
     <a th:href="@{/cliente/favoritos}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low">Favoritos</a>

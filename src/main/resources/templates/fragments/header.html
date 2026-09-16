@@ -26,18 +26,26 @@
         </nav>
 
         <!-- Acciones -->
-        <div class="flex items-center space-x-2 md:space-x-4">
-            <form th:if="${usuarioAutenticado}" th:action="@{/logout}" method="post" class="hidden md:block">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                <button type="submit" class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors px-3 py-2 flex items-center gap-1">
-                    <span class="material-symbols-outlined text-[20px]">logout</span> Cerrar sesión
-                </button>
-            </form>
+        <div class="flex items-center space-x-1 md:space-x-2">
             <a th:unless="${usuarioAutenticado}" th:href="@{/login}" class="hidden md:block font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors px-3 py-2">Iniciar sesión</a>
-            <a th:href="@{/carrito}" aria-label="Carrito" class="text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all p-2 rounded-full flex items-center justify-center relative">
+
+            <a th:if="${usuarioAutenticado}" th:href="${esAdmin} ? @{/admin} : @{/cliente}" aria-label="Mi panel"
+               class="hidden md:flex text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all p-2 rounded-full items-center justify-center">
+                <span class="material-symbols-outlined">space_dashboard</span>
+            </a>
+
+            <a th:unless="${esAdmin}" th:href="@{/carrito}" aria-label="Carrito" class="text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all p-2 rounded-full flex items-center justify-center relative">
                 <span class="material-symbols-outlined">shopping_cart</span>
                 <span th:if="${carritoCantidad != null and carritoCantidad > 0}" th:text="${carritoCantidad}" class="absolute -top-0.5 -right-0.5 bg-error text-on-error text-[10px] font-label-sm w-5 h-5 rounded-full flex items-center justify-center">0</span>
             </a>
+
+            <form th:if="${usuarioAutenticado}" th:action="@{/logout}" method="post" class="hidden md:block">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit" aria-label="Cerrar sesión" class="text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all p-2 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined">logout</span>
+                </button>
+            </form>
+
             <!-- Botón menú móvil -->
             <button id="mobile-menu-toggle" aria-label="Abrir menú" class="md:hidden text-on-surface-variant hover:text-primary p-2 rounded-full flex items-center justify-center">
                 <span class="material-symbols-outlined">menu</span>
@@ -53,9 +61,12 @@
         <a th:href="@{/nosotros}" class="block font-label-md text-label-md text-on-surface-variant hover:text-primary py-2">Nosotros</a>
         <a th:href="@{/contacto}" class="block font-label-md text-label-md text-on-surface-variant hover:text-primary py-2">Contacto</a>
         <hr class="border-outline-variant"/>
+        <a th:if="${usuarioAutenticado}" th:href="${esAdmin} ? @{/admin} : @{/cliente}" class="flex items-center gap-2 font-label-md text-label-md text-on-surface-variant hover:text-primary py-2">
+            <span class="material-symbols-outlined text-[20px]">space_dashboard</span> Mi panel
+        </a>
         <form th:if="${usuarioAutenticado}" th:action="@{/logout}" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-            <button type="submit" class="w-full flex items-center justify-center gap-1 font-label-md text-label-md text-primary py-2">
+            <button type="submit" class="w-full flex items-center gap-2 font-label-md text-label-md text-primary py-2">
                 <span class="material-symbols-outlined text-[20px]">logout</span> Cerrar sesión
             </button>
         </form>
