@@ -3,8 +3,7 @@
 <body>
 
 <!-- Sidebar de navegación del Cliente -->
-<aside th:fragment="sidebar(activo)" class="hidden lg:flex lg:flex-col w-64 shrink-0 bg-white border-r border-outline-variant min-h-screen sticky top-0">
-    <div class="px-6 py-6 border-b border-outline-variant flex justify-center items-center">
+<aside th:fragment="sidebar(activo)" class="hidden lg:flex lg:flex-col w-64 shrink-0 bg-white border-r border-outline-variant h-screen sticky top-0 self-start overflow-y-auto">    <div class="px-6 py-6 border-b border-outline-variant flex justify-center items-center">
         <a th:href="@{/}" class="flex items-center">
             <img th:src="@{/img/logo_SaborMilagroso_sinFondo.png}" alt="Sabor Milagroso" class="h-16 w-auto object-contain"/>
         </a>
