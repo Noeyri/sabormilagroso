@@ -116,6 +116,8 @@ CREATE TABLE direcciones (
     distrito VARCHAR(100),
     referencia VARCHAR(255),
     predeterminada BOOLEAN DEFAULT FALSE,
+    latitud DECIMAL(10,7) NULL,
+    longitud DECIMAL(10,7) NULL,
     usuario_id INT NOT NULL,
     CONSTRAINT fk_direccion_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );

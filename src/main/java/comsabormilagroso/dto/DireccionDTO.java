@@ -11,17 +11,26 @@ public class DireccionDTO {
     private String distrito;
     private String referencia;
     private boolean predeterminada;
+    private Double latitud;
+    private Double longitud;
 
     public DireccionDTO() {
     }
 
     public DireccionDTO(Long id, String etiqueta, String direccion, String distrito, String referencia, boolean predeterminada) {
+        this(id, etiqueta, direccion, distrito, referencia, predeterminada, null, null);
+    }
+
+    public DireccionDTO(Long id, String etiqueta, String direccion, String distrito, String referencia,
+                         boolean predeterminada, Double latitud, Double longitud) {
         this.id = id;
         this.etiqueta = etiqueta;
         this.direccion = direccion;
         this.distrito = distrito;
         this.referencia = referencia;
         this.predeterminada = predeterminada;
+        this.latitud = latitud;
+        this.longitud = longitud;
     }
 
     public Long getId() { return id; }
@@ -41,4 +50,10 @@ public class DireccionDTO {
 
     public boolean isPredeterminada() { return predeterminada; }
     public void setPredeterminada(boolean predeterminada) { this.predeterminada = predeterminada; }
+
+    public Double getLatitud() { return latitud; }
+    public void setLatitud(Double latitud) { this.latitud = latitud; }
+
+    public Double getLongitud() { return longitud; }
+    public void setLongitud(Double longitud) { this.longitud = longitud; }
 }

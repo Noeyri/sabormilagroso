@@ -159,6 +159,8 @@ public class ClienteController {
     public String guardarDireccion(@RequestParam String etiqueta, @RequestParam String direccion,
                                    @RequestParam(required = false) String distrito,
                                    @RequestParam(required = false) String referencia,
+                                   @RequestParam(required = false) Double latitud,
+                                   @RequestParam(required = false) Double longitud,
                                    Authentication auth) {
         Usuario u = obtenerUsuario(auth);
         if (u == null) return "redirect:/login";
@@ -168,6 +170,8 @@ public class ClienteController {
         d.setDistrito(distrito);
         d.setReferencia(referencia);
         d.setPredeterminada(false);
+        d.setLatitud(latitud);
+        d.setLongitud(longitud);
         d.setUsuario(u);
         direccionService.guardar(d);
         return "redirect:/cliente/direcciones";

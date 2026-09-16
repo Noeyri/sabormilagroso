@@ -28,6 +28,7 @@ public class DireccionService {
 
     private DireccionDTO toDTO(Direccion d) {
         return new DireccionDTO(d.getId(), d.getEtiqueta(), d.getDireccion(),
-                d.getDistrito(), d.getReferencia(), Boolean.TRUE.equals(d.getPredeterminada()));
+                d.getDistrito(), d.getReferencia(), Boolean.TRUE.equals(d.getPredeterminada()),
+                d.getLatitud(), d.getLongitud());
     }
 }
