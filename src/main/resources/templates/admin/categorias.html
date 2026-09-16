@@ -12,9 +12,13 @@
     <main class="p-6 md:p-10 max-w-5xl mx-auto space-y-8">
         <div class="flex flex-wrap items-center justify-between gap-4">
             <h1 class="hidden lg:block font-headline-lg text-headline-lg text-on-surface">Categorías</h1>
-            <button type="button" class="inline-flex items-center gap-2 bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-full hover:bg-hover-orange transition-colors duration-300" th:onclick="|showToast('Nueva categoría creada (modo demostración).')|">
-                <span class="material-symbols-outlined text-[18px]">add</span> Nueva categoría
-            </button>
+            <form th:action="@{/admin/categorias/guardar}" method="post" class="flex items-center gap-2 w-full lg:w-auto">
+                <input type="text" name="nombre" required="required" placeholder="Nombre de la categoría" class="flex-grow lg:w-56 px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
+                <button type="submit" class="inline-flex items-center gap-2 bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-full hover:bg-hover-orange transition-colors duration-300">
+                    <span class="material-symbols-outlined text-[18px]">add</span> Crear
+                </button>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            </form>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -30,9 +34,17 @@
                 </div>
                 <p class="font-body-md text-body-md text-on-surface-variant" th:text="${c.descripcion}">Descripción</p>
                 <p class="font-label-sm text-label-sm text-on-surface-variant" th:text="${c.cantidadProductos} + ' producto(s)'">0 productos</p>
-                <div class="flex gap-4 pt-2 border-t border-outline-variant">
-                    <button type="button" class="font-label-md text-label-md text-primary hover:text-hover-orange" th:onclick="|showToast('Edición de categoría (modo demostración).')|">Editar</button>
-                    <button type="button" class="font-label-md text-label-md text-error hover:text-error/80" th:onclick="|showToast('Categoría eliminada (modo demostración).')|">Eliminar</button>
+                <div class="flex gap-4 pt-2 border-t border-outline-variant items-center">
+                    <form th:action="@{/admin/categorias/guardar}" method="post" class="flex items-center gap-2 flex-grow">
+                        <input type="hidden" name="id" th:value="${c.id}"/>
+                        <input type="text" name="nombre" th:value="${c.nombre}" class="px-3 py-2 rounded-lg border border-outline-variant bg-surface-container-lowest font-body-md text-body-md outline-none w-full"/>
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="font-label-md text-label-md text-primary hover:text-hover-orange whitespace-nowrap">Guardar</button>
+                    </form>
+                    <form th:action="@{/admin/categorias/{id}/eliminar(id=${c.id})}" method="post" class="inline" onsubmit="return confirm('¿Eliminar esta categoría?');">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="font-label-md text-label-md text-error hover:text-error/80">Eliminar</button>
+                    </form>
                 </div>
             </div>
         </div>

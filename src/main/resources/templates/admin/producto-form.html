@@ -14,7 +14,8 @@
             <span class="material-symbols-outlined text-[18px]">arrow_back</span> Volver a productos
         </a>
 
-        <form th:attr="data-mock-submit=${producto != null ? 'Producto actualizado correctamente (modo demostración).' : 'Producto creado correctamente (modo demostración).'}"
+        <form th:action="${producto != null} ? @{/admin/productos/guardar(id=${producto.id})} : @{/admin/productos/guardar}"
+              method="post"
               class="bg-white rounded-xl border border-surface-variant p-6 md:p-8 space-y-6">
             <h1 class="font-headline-md text-headline-md text-on-surface" th:text="${producto != null} ? 'Editar producto' : 'Nuevo producto'">Producto</h1>
 
@@ -25,14 +26,25 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="font-label-md text-label-md text-on-surface block mb-2" for="categoria">Categoría</label>
-                    <select id="categoria" name="categoria" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md">
-                        <option th:each="c : ${categorias}" th:text="${c.nombre}" th:selected="${producto != null and producto.categoria == c.nombre}">Categoría</option>
+                    <label class="font-label-md text-label-md text-on-surface block mb-2" for="categoriaId">Categoría</label>
+                    <select id="categoriaId" name="categoriaId" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md">
+                        <option th:each="c : ${categorias}" th:value="${c.id}" th:text="${c.nombre}" th:selected="${producto != null and producto.categoria.id == c.id}">Categoría</option>
                     </select>
                 </div>
                 <div>
                     <label class="font-label-md text-label-md text-on-surface block mb-2" for="precio">Precio (S/)</label>
                     <input id="precio" name="precio" type="number" step="0.10" min="0" required="required" th:value="${producto != null ? producto.precio : ''}" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="0.00"/>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="font-label-md text-label-md text-on-surface block mb-2" for="stock">Stock disponible</label>
+                    <input id="stock" name="stock" type="number" min="0" required="required" th:value="${producto != null ? producto.stock : ''}" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="0"/>
+                </div>
+                <div>
+                    <label class="font-label-md text-label-md text-on-surface block mb-2" for="imagenUrl">URL de imagen</label>
+                    <input id="imagenUrl" name="imagenUrl" type="text" th:value="${producto != null ? producto.imagenUrl : ''}" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="https://..."/>
                 </div>
             </div>
 
@@ -42,26 +54,28 @@
             </div>
 
             <div>
-                <label class="font-label-md text-label-md text-on-surface block mb-2" for="descripcion-larga">Descripción completa</label>
-                <textarea id="descripcion-larga" name="descripcionLarga" rows="4" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="Descripción detallada para la página de producto" th:text="${producto != null ? producto.descripcionLarga : ''}"></textarea>
+                <label class="font-label-md text-label-md text-on-surface block mb-2" for="descripcionLarga">Descripción completa</label>
+                <textarea id="descripcionLarga" name="descripcionLarga" rows="4" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="Descripción detallada para la página de producto" th:text="${producto != null ? producto.descripcionLarga : ''}"></textarea>
             </div>
 
             <div>
-                <label class="font-label-md text-label-md text-on-surface block mb-2" for="imagen">Imagen del plato</label>
+                <label class="font-label-md text-label-md text-on-surface block mb-2">Vista previa de imagen</label>
                 <div class="flex items-center gap-4">
-                    <img th:if="${producto != null}" class="w-20 h-20 rounded-lg object-cover" th:src="${producto.imagenUrl}" alt="Vista previa"/>
-                    <input id="imagen" name="imagen" type="file" accept="image/*" class="flex-grow text-body-md font-body-md text-on-surface-variant file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:bg-primary-fixed file:text-on-primary-fixed file:font-label-md file:text-label-md hover:file:bg-primary-fixed-dim"/>
+                    <img th:if="${producto != null and producto.imagenUrl != null and !producto.imagenUrl.isEmpty()}" class="w-20 h-20 rounded-lg object-cover" th:src="${producto.imagenUrl}" alt="Vista previa"/>
+                    <span th:unless="${producto != null and producto.imagenUrl != null and !producto.imagenUrl.isEmpty()}" class="text-body-md font-body-md text-on-surface-variant">Sin imagen configurada.</span>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <label class="flex items-center gap-2 font-body-md text-body-md text-on-surface-variant">
-                    <input type="checkbox" th:checked="${producto != null and producto.popular}" class="rounded border-outline-variant text-primary focus:ring-primary"/> Marcar como popular
+                    <input type="checkbox" name="popular" value="true" th:checked="${producto != null and producto.popular}" class="rounded border-outline-variant text-primary focus:ring-primary"/> Marcar como popular
                 </label>
                 <label class="flex items-center gap-2 font-body-md text-body-md text-on-surface-variant">
-                    <input type="checkbox" th:checked="${producto != null and producto.recomendado}" class="rounded border-outline-variant text-primary focus:ring-primary"/> Marcar como recomendado
+                    <input type="checkbox" name="recomendado" value="true" th:checked="${producto != null and producto.recomendado}" class="rounded border-outline-variant text-primary focus:ring-primary"/> Marcar como recomendado
                 </label>
             </div>
+
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
             <div class="flex gap-4 pt-4 border-t border-outline-variant">
                 <button type="submit" class="bg-primary text-on-primary font-label-md text-label-md px-8 py-3 rounded-full hover:bg-hover-orange transition-colors duration-300">

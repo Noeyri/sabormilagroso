@@ -30,8 +30,16 @@ CREATE TABLE productos (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     descripcion TEXT,
+    descripcion_larga TEXT,
     precio NUMERIC(10, 2) NOT NULL,
+    precio_anterior NUMERIC(10, 2),
     disponible BOOLEAN DEFAULT TRUE,
+    popular BOOLEAN DEFAULT FALSE,
+    recomendado BOOLEAN DEFAULT FALSE,
+    calificacion NUMERIC(3, 2) DEFAULT 0,
+    tiempo_preparacion_min INT,
+    imagen_url VARCHAR(500),
+    stock INT DEFAULT 0,
     categoria_id INT NOT NULL,
     CONSTRAINT fk_producto_categoria FOREIGN KEY (categoria_id) REFERENCES categorias(id)
 );
@@ -98,4 +106,16 @@ CREATE TABLE pagos (
     fecha_pago TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     pedido_id INT UNIQUE NOT NULL,
     CONSTRAINT fk_pago_pedido FOREIGN KEY (pedido_id) REFERENCES pedidos(id)
+);
+
+-- 11. DIRECCIONES (Direcciones guardadas del cliente)
+CREATE TABLE direcciones (
+    id SERIAL PRIMARY KEY,
+    etiqueta VARCHAR(50) NOT NULL,
+    direccion VARCHAR(255) NOT NULL,
+    distrito VARCHAR(100),
+    referencia VARCHAR(255),
+    predeterminada BOOLEAN DEFAULT FALSE,
+    usuario_id INT NOT NULL,
+    CONSTRAINT fk_direccion_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );

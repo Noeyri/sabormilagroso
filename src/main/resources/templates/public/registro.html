@@ -12,7 +12,8 @@
             <p class="font-body-md text-body-md text-on-surface-variant">Regístrate para hacer pedidos y guardar tus favoritos.</p>
         </div>
 
-        <form data-mock-submit="Registro simulado (aún sin backend)." class="space-y-5">
+        <form th:action="@{/registro}" method="post" class="space-y-5">
+            <div th:if="${error}" class="bg-red-50 border border-red-200 text-red-700 font-body-md text-body-md px-4 py-3 rounded-lg" th:text="${error}">Error</div>
             <div>
                 <label class="font-label-md text-label-md text-on-surface block mb-2" for="nombre">Nombre completo</label>
                 <input id="nombre" name="nombre" type="text" required="required" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="Tu nombre"/>
@@ -38,6 +39,8 @@
                 <input type="checkbox" required="required" class="mt-1 rounded border-outline-variant text-primary focus:ring-primary"/>
                 Acepto los términos y condiciones y la política de privacidad.
             </label>
+
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
             <button type="submit" class="w-full bg-primary text-on-primary font-label-md text-label-md py-4 rounded-full hover:bg-hover-orange transition-colors duration-300">
                 Crear cuenta

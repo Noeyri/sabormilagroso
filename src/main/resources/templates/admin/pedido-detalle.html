@@ -21,15 +21,18 @@
                     <p class="font-label-sm text-label-sm text-on-surface-variant" th:text="${pedido.fecha}">Fecha</p>
                 </div>
 
-                <!-- Cambiar estado (mock) -->
-                <div class="flex items-center gap-3">
-                    <select class="px-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest font-label-md text-label-md text-on-surface outline-none" onchange="showToast('Estado del pedido actualizado (modo demostración).')">
-                        <option th:selected="${pedido.estado == 'En preparación'}">En preparación</option>
-                        <option th:selected="${pedido.estado == 'En camino'}">En camino</option>
-                        <option th:selected="${pedido.estado == 'Entregado'}">Entregado</option>
-                        <option th:selected="${pedido.estado == 'Cancelado'}">Cancelado</option>
+                <!-- Cambiar estado -->
+                <form th:action="@{/admin/pedidos/{id}/estado(id=${pedido.id})}" method="post" class="flex items-center gap-3">
+                    <select name="estado" class="px-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest font-label-md text-label-md text-on-surface outline-none">
+                        <option value="PENDIENTE" th:selected="${pedido.estado == 'Pendiente'}">Pendiente</option>
+                        <option value="EN_PREPARACION" th:selected="${pedido.estado == 'En preparación'}">En preparación</option>
+                        <option value="EN_CAMINO" th:selected="${pedido.estado == 'En camino'}">En camino</option>
+                        <option value="ENTREGADO" th:selected="${pedido.estado == 'Entregado'}">Entregado</option>
+                        <option value="CANCELADO" th:selected="${pedido.estado == 'Cancelado'}">Cancelado</option>
                     </select>
-                </div>
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="bg-primary text-on-primary font-label-md text-label-md px-4 py-2.5 rounded-full hover:bg-hover-orange transition-colors duration-300">Actualizar</button>
+                </form>
             </div>
 
             <!-- Items -->

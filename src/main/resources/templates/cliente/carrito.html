@@ -21,19 +21,35 @@
                         <p class="font-label-md text-label-md text-on-surface truncate" th:text="${item.nombre}">Producto</p>
                         <p class="font-label-sm text-label-sm text-on-surface-variant" th:text="'S/ ' + ${#numbers.formatDecimal(item.precioUnitario, 1, 2)} + ' c/u'">S/ 0.00 c/u</p>
                     </div>
+
+                    <!-- Botones de cantidad y eliminar -->
                     <div class="flex items-center border border-outline-variant rounded-full shrink-0">
-                        <button type="button" class="w-9 h-9 flex items-center justify-center text-on-surface-variant hover:text-primary" th:onclick="|showToast('Cantidad actualizada (modo demostración).')|">
-                            <span class="material-symbols-outlined text-[18px]">remove</span>
-                        </button>
+                        <form th:action="@{/carrito/actualizar}" method="post">
+                            <input type="hidden" name="id" th:value="${item.productoId}"/>
+                            <input type="hidden" name="cantidad" th:value="${item.cantidad - 1}"/>
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <button type="submit" class="w-9 h-9 flex items-center justify-center text-on-surface-variant hover:text-primary" aria-label="Restar">
+                                <span class="material-symbols-outlined text-[18px]">remove</span>
+                            </button>
+                        </form>
                         <span class="w-8 text-center font-label-md text-label-md" th:text="${item.cantidad}">1</span>
-                        <button type="button" class="w-9 h-9 flex items-center justify-center text-on-surface-variant hover:text-primary" th:onclick="|showToast('Cantidad actualizada (modo demostración).')|">
-                            <span class="material-symbols-outlined text-[18px]">add</span>
-                        </button>
+                        <form th:action="@{/carrito/actualizar}" method="post">
+                            <input type="hidden" name="id" th:value="${item.productoId}"/>
+                            <input type="hidden" name="cantidad" th:value="${item.cantidad + 1}"/>
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <button type="submit" class="w-9 h-9 flex items-center justify-center text-on-surface-variant hover:text-primary" aria-label="Sumar">
+                                <span class="material-symbols-outlined text-[18px]">add</span>
+                            </button>
+                        </form>
                     </div>
                     <span class="font-label-md text-label-md text-on-surface w-20 text-right shrink-0" th:text="'S/ ' + ${#numbers.formatDecimal(item.subtotal, 1, 2)}">S/ 0.00</span>
-                    <button type="button" aria-label="Quitar" class="text-on-surface-variant hover:text-error shrink-0" th:onclick="|showToast('Producto eliminado del carrito (modo demostración).')|">
-                        <span class="material-symbols-outlined">delete</span>
-                    </button>
+                    <form th:action="@{/carrito/eliminar}" method="post">
+                        <input type="hidden" name="id" th:value="${item.productoId}"/>
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" aria-label="Quitar" class="text-on-surface-variant hover:text-error shrink-0">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
+                    </form>
                 </div>
             </div>
 

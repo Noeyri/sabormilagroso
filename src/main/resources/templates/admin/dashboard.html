@@ -117,16 +117,17 @@
         const colorSuccess = '#5C8D61';
         const colorVariant = '#D9534F';
 
-        // Nombres de los productos marcados como populares (dato real del backend)
-        const nombresPopulares = /*[[${productos.?[popular]. ![nombre]}]]*/ ['Plato 1', 'Plato 2', 'Plato 3'];
+        // Datos reales calculados desde los pedidos de la base de datos
+        const etiquetas = /*[[${etiquetasVentas}]]*/ ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+        const montos = /*[[${ventasUltimos7}]]*/ [0, 0, 0, 0, 0, 0, 0];
 
         new Chart(document.getElementById('tendenciaVentasChart'), {
             type: 'line',
             data: {
-                labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                labels: etiquetas,
                 datasets: [{
                     label: 'Ventas (S/)',
-                    data: [450, 520, 480, 710, 890, 1200, 1150],
+                    data: montos,
                     borderColor: colorPrimary,
                     backgroundColor: colorPrimaryLight,
                     fill: true,
@@ -136,13 +137,18 @@
             options: { responsive: true, maintainAspectRatio: false }
         });
 
+        // Platos más vendidos según la suma de cantidades en items_pedido
+        const topProductos = /*[[${topProductos}]]*/ [];
+        const topNombres = topProductos.map(p => p.nombre);
+        const topCantidades = topProductos.map(p => p.total);
+
         new Chart(document.getElementById('productosVendidosChart'), {
             type: 'pie',
             data: {
-                labels: nombresPopulares,
+                labels: topNombres,
                 datasets: [{
-                    data: nombresPopulares.map(() => Math.floor(Math.random() * 30) + 10),
-                    backgroundColor: [colorPrimary, colorTertiary, colorSuccess, colorVariant]
+                    data: topCantidades,
+                    backgroundColor: [colorPrimary, colorTertiary, colorSuccess, colorVariant, '#705A51']
                 }]
             },
             options: { responsive: true, maintainAspectRatio: false }

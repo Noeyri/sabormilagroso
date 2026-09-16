@@ -56,9 +56,12 @@
                                   th:text="${u.estado}">Estado</span>
                         </td>
                         <td class="px-5 py-4 text-right whitespace-nowrap">
-                            <button type="button" class="font-label-md text-label-md text-primary hover:text-hover-orange" th:onclick="|showToast('Estado del usuario actualizado (modo demostración).')|">
-                                <span th:text="${u.estado == 'Activo'} ? 'Desactivar' : 'Activar'">Acción</span>
-                            </button>
+                            <form th:action="@{/admin/usuarios/{id}/toggle(id=${u.id})}" method="post" class="inline">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                <button type="submit" class="font-label-md text-label-md text-primary hover:text-hover-orange">
+                                    <span th:text="${u.estado == 'Activo'} ? 'Desactivar' : 'Activar'">Acción</span>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 </tbody>

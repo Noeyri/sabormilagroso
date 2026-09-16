@@ -38,33 +38,30 @@
             </div>
         </div>
 
-        <!-- Placeholder de gráfico de ventas -->
+        <!-- Gráfico de ventas por día (datos reales) -->
         <div class="bg-white rounded-xl border border-surface-variant p-6 space-y-4">
             <h2 class="font-headline-sm text-headline-sm text-on-surface">Ventas por día</h2>
             <div class="h-64 flex items-end gap-3 px-2">
-                <div class="flex-1 bg-primary-fixed rounded-t-lg" style="height: 45%"></div>
-                <div class="flex-1 bg-primary-fixed rounded-t-lg" style="height: 65%"></div>
-                <div class="flex-1 bg-primary-fixed rounded-t-lg" style="height: 40%"></div>
-                <div class="flex-1 bg-primary rounded-t-lg" style="height: 85%"></div>
-                <div class="flex-1 bg-primary-fixed rounded-t-lg" style="height: 55%"></div>
-                <div class="flex-1 bg-primary-fixed rounded-t-lg" style="height: 70%"></div>
-                <div class="flex-1 bg-primary-fixed rounded-t-lg" style="height: 50%"></div>
+                <div th:each="v, iter : ${ventasUltimos7}"
+                     class="flex-1 rounded-t-lg"
+                     th:classappend="${iter.odd} ? 'bg-primary-fixed' : 'bg-primary'"
+                     th:style="|height: ${alturasVentas[iter.index]}%|"
+                     th:title="|${etiquetasVentas[iter.index]}: S/ ${#numbers.formatDecimal(v, 1, 2)}|"></div>
             </div>
             <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant px-2">
-                <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
+                <span th:each="e : ${etiquetasVentas}" th:text="${e}">Lun</span>
             </div>
-            <p class="font-label-sm text-label-sm text-on-surface-variant text-center pt-2"></p>
         </div>
 
         <!-- Productos más vendidos -->
         <div class="bg-white rounded-xl border border-surface-variant p-6 space-y-4">
             <h2 class="font-headline-sm text-headline-sm text-on-surface">Productos más vendidos</h2>
             <div class="space-y-3">
-                <div th:each="p, iter : ${productos}" th:if="${iter.index < 5}" class="flex items-center gap-4">
+                <div th:each="p, iter : ${topProductos}" class="flex items-center gap-4">
                     <span class="w-6 font-label-md text-label-md text-on-surface-variant" th:text="${iter.index + 1}">1</span>
                     <img class="w-10 h-10 rounded-lg object-cover" th:src="${p.imagenUrl}" th:alt="${p.nombre}"/>
                     <span class="flex-grow font-body-md text-body-md text-on-surface" th:text="${p.nombre}">Plato</span>
-                    <span class="font-label-md text-label-md text-on-surface-variant" th:text="${p.calificacion} + ' ★'">4.8 ★</span>
+                    <span class="font-label-md text-label-md text-on-surface-variant" th:text="${p.total} + ' vendidos'">10 vendidos</span>
                 </div>
             </div>
         </div>
