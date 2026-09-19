@@ -1,25 +1,22 @@
 package comsabormilagroso.Controller;
 
 import comsabormilagroso.Entity.Categoria;
-import comsabormilagroso.Entity.Pedido;
 import comsabormilagroso.Entity.Producto;
 import comsabormilagroso.Entity.Usuario;
 import comsabormilagroso.Service.CategoriaService;
 import comsabormilagroso.Service.PedidoService;
 import comsabormilagroso.Service.ProductoService;
 import comsabormilagroso.Service.UsuarioService;
+import comsabormilagroso.dto.PedidoDTO;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin")
@@ -47,20 +44,49 @@ public class AdminController {
 
     @GetMapping
     public String dashboard(Model model) {
-        model.addAttribute("pedidos", pedidoService.obtenerTodos());
+        List<PedidoDTO> pedidos = pedidoService.obtenerTodos();
+        double ventasTotales = pedidoService.obtenerVentasTotales();
+
+        model.addAttribute("pedidos", pedidos);
         model.addAttribute("productos", productoService.obtenerTodos());
         model.addAttribute("usuarios", usuarioService.obtenerUsuariosSistema());
-        model.addAttribute("ventasTotales", pedidoService.obtenerVentasTotales());
+        model.addAttribute("ventasTotales", ventasTotales);
         model.addAttribute("pedidosPendientes", pedidoService.obtenerPedidosPendientes());
         model.addAttribute("ventasUltimos7", pedidoService.ventasUltimos7Dias());
         model.addAttribute("etiquetasVentas", pedidoService.etiquetasUltimos7Dias());
         model.addAttribute("topProductos", pedidoService.topProductosVendidos(5));
+        model.addAttribute("ticketPromedio", pedidos.isEmpty() ? 0 : ventasTotales / pedidos.size());
+
+        Map<String, Long> pedidosPorEstado = pedidoService.contarPedidosPorEstado();
+        model.addAttribute("estadosLabels", new ArrayList<>(pedidosPorEstado.keySet()));
+        model.addAttribute("estadosValores", new ArrayList<>(pedidosPorEstado.values()));
+
+        Map<String, BigDecimal> ventasCategoria = pedidoService.ventasPorCategoria();
+        model.addAttribute("categoriasLabels", new ArrayList<>(ventasCategoria.keySet()));
+        model.addAttribute("categoriasValores", new ArrayList<>(ventasCategoria.values()));
+
         return "admin/dashboard";
     }
 
     @GetMapping("/pedidos")
-    public String pedidos(Model model) {
-        model.addAttribute("pedidos", pedidoService.obtenerTodos());
+    public String pedidos(@RequestParam(required = false) String estado,
+                          @RequestParam(required = false) String buscar,
+                          Model model) {
+        List<PedidoDTO> pedidos = pedidoService.obtenerTodos();
+
+        if (estado != null && !estado.isBlank() && !"TODOS".equalsIgnoreCase(estado)) {
+            pedidos = pedidos.stream().filter(p -> p.getEstado().equalsIgnoreCase(estado)).toList();
+        }
+        if (buscar != null && !buscar.isBlank()) {
+            String termino = buscar.trim().toLowerCase();
+            pedidos = pedidos.stream()
+                    .filter(p -> p.getCodigo() != null && p.getCodigo().toLowerCase().contains(termino))
+                    .toList();
+        }
+
+        model.addAttribute("pedidos", pedidos);
+        model.addAttribute("filtroEstado", estado == null || estado.isBlank() ? "TODOS" : estado);
+        model.addAttribute("filtroBuscar", buscar == null ? "" : buscar);
         return "admin/pedidos";
     }
 
@@ -112,12 +138,8 @@ public class AdminController {
                                   @RequestParam(defaultValue = "false") boolean popular,
                                   @RequestParam(defaultValue = "false") boolean recomendado,
                                   @RequestParam(required = false) Integer stock) {
-        Producto producto;
-        if (id != null) {
-            producto = productoService.obtenerEntidad(id).orElse(new Producto());
-        } else {
-            producto = new Producto();
-        }
+        boolean esNuevo = (id == null);
+        Producto producto = esNuevo ? new Producto() : productoService.obtenerEntidad(id).orElse(new Producto());
         producto.setNombre(nombre);
         producto.setPrecio(precio);
         producto.setPrecioAnterior(precioAnterior);
@@ -127,7 +149,9 @@ public class AdminController {
         producto.setPopular(popular);
         producto.setRecomendado(recomendado);
         producto.setStock(stock == null ? 0 : stock);
-        producto.setDisponible(true);
+        if (esNuevo) {
+            producto.setDisponible(true);
+        }
         Categoria categoria = categoriaService.obtenerPorId(categoriaId).orElseThrow();
         producto.setCategoria(categoria);
         productoService.guardar(producto);
@@ -137,6 +161,15 @@ public class AdminController {
     @PostMapping("/productos/{id}/eliminar")
     public String eliminarProducto(@PathVariable Long id) {
         productoService.eliminar(id);
+        return "redirect:/admin/productos";
+    }
+
+    @PostMapping("/productos/{id}/toggle")
+    public String toggleProducto(@PathVariable Long id) {
+        productoService.obtenerEntidad(id).ifPresent(p -> {
+            p.setDisponible(!Boolean.TRUE.equals(p.getDisponible()));
+            productoService.guardar(p);
+        });
         return "redirect:/admin/productos";
     }
 
@@ -152,11 +185,14 @@ public class AdminController {
                                    @RequestParam(required = false) String descripcion) {
         Categoria categoria = id != null ? categoriaService.obtenerPorId(id)
                 .orElseGet(Categoria::new) : new Categoria();
+        boolean esNueva = (id == null);
         categoria.setNombre(nombre);
         if (descripcion != null) {
             categoria.setDescripcion(descripcion);
         }
-        categoria.setActivo(true);
+        if (esNueva) {
+            categoria.setActivo(true);
+        }
         categoriaService.guardar(categoria);
         return "redirect:/admin/categorias";
     }
@@ -164,6 +200,15 @@ public class AdminController {
     @PostMapping("/categorias/{id}/eliminar")
     public String eliminarCategoria(@PathVariable Long id) {
         categoriaService.eliminar(id);
+        return "redirect:/admin/categorias";
+    }
+
+    @PostMapping("/categorias/{id}/toggle")
+    public String toggleCategoria(@PathVariable Long id) {
+        categoriaService.obtenerPorId(id).ifPresent(c -> {
+            c.setActivo(!Boolean.TRUE.equals(c.getActivo()));
+            categoriaService.guardar(c);
+        });
         return "redirect:/admin/categorias";
     }
 
@@ -190,6 +235,15 @@ public class AdminController {
         return "redirect:/admin/promociones";
     }
 
+    @PostMapping("/promociones/{id}/finalizar")
+    public String finalizarPromocion(@PathVariable Long id) {
+        productoService.obtenerEntidad(id).ifPresent(p -> {
+            p.setPrecioAnterior(null);
+            productoService.guardar(p);
+        });
+        return "redirect:/admin/promociones";
+    }
+
     @GetMapping("/usuarios")
     public String usuarios(Model model) {
         model.addAttribute("usuarios", usuarioService.obtenerUsuariosSistema());
@@ -206,20 +260,42 @@ public class AdminController {
     }
 
     @GetMapping("/reportes")
-    public String reportes(Model model) {
-        model.addAttribute("pedidos", pedidoService.obtenerTodos());
+    public String reportes(@RequestParam(defaultValue = "7") String rango, Model model) {
+        List<PedidoDTO> pedidos = pedidoService.obtenerTodos();
+        double ventasTotales = pedidoService.obtenerVentasTotales();
+
+        List<BigDecimal> ventasSerie;
+        List<String> etiquetasSerie;
+        if ("30".equals(rango)) {
+            ventasSerie = pedidoService.ventasUltimosNDias(30);
+            etiquetasSerie = pedidoService.etiquetasUltimosNDias(30);
+        } else if ("anio".equals(rango)) {
+            ventasSerie = pedidoService.ventasPorMesEsteAnio();
+            etiquetasSerie = pedidoService.etiquetasMeses();
+        } else {
+            rango = "7";
+            ventasSerie = pedidoService.ventasUltimosNDias(7);
+            etiquetasSerie = pedidoService.etiquetasUltimosNDias(7);
+        }
+
+        model.addAttribute("pedidos", pedidos);
         model.addAttribute("productos", productoService.obtenerTodos());
-        model.addAttribute("usuarios", usuarioService.obtenerUsuariosSistema());
-        model.addAttribute("ventasTotales", pedidoService.obtenerVentasTotales());
-        model.addAttribute("ventasUltimos7", pedidoService.ventasUltimos7Dias());
-        model.addAttribute("etiquetasVentas", pedidoService.etiquetasUltimos7Dias());
-        model.addAttribute("topProductos", pedidoService.topProductosVendidos(5));
-        List<BigDecimal> ventas = pedidoService.ventasUltimos7Dias();
-        BigDecimal maximo = ventas.stream().reduce(BigDecimal.ZERO, BigDecimal::max);
-        model.addAttribute("alturasVentas", ventas.stream()
-                .map(v -> maximo.signum() <= 0 ? 5
-                        : (int) Math.max(3, Math.round(v.doubleValue() / maximo.doubleValue() * 100)))
-                .toList());
+        model.addAttribute("clientesActivos", usuarioService.contarClientes());
+        model.addAttribute("ventasTotales", ventasTotales);
+        model.addAttribute("ticketPromedio", pedidos.isEmpty() ? 0 : ventasTotales / pedidos.size());
+        model.addAttribute("ventasSerie", ventasSerie);
+        model.addAttribute("etiquetasSerie", etiquetasSerie);
+        model.addAttribute("rangoActual", rango);
+        model.addAttribute("topProductos", pedidoService.topProductosVendidos(8));
+
+        Map<String, Long> pedidosPorEstado = pedidoService.contarPedidosPorEstado();
+        model.addAttribute("estadosLabels", new ArrayList<>(pedidosPorEstado.keySet()));
+        model.addAttribute("estadosValores", new ArrayList<>(pedidosPorEstado.values()));
+
+        Map<String, BigDecimal> ventasCategoria = pedidoService.ventasPorCategoria();
+        model.addAttribute("categoriasLabels", new ArrayList<>(ventasCategoria.keySet()));
+        model.addAttribute("categoriasValores", new ArrayList<>(ventasCategoria.values()));
+
         return "admin/reportes";
     }
 

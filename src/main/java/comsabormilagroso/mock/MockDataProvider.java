@@ -187,6 +187,10 @@ public class MockDataProvider {
         return productos.stream().filter(ProductoDTO::isRecomendado).toList();
     }
 
+    public List<ProductoDTO> obtenerDisponibles() {
+        return productos.stream().filter(ProductoDTO::isDisponible).toList();
+    }
+
     public List<ProductoDTO> obtenerEnPromocion() {
         return productos.stream().filter(ProductoDTO::isEnPromocion).toList();
     }

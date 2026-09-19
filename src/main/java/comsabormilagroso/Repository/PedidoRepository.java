@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,11 +30,19 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
             "ORDER BY SUM(ip.cantidad) DESC")
     List<TopProductoVendido> topProductosVendidos();
 
+    @Query("SELECT ip.producto.categoria.nombre AS categoria, SUM(ip.subtotal) AS total " +
+            "FROM ItemPedido ip GROUP BY ip.producto.categoria.nombre " +
+            "ORDER BY SUM(ip.subtotal) DESC")
+    List<VentaPorCategoria> ventasPorCategoria();
+
     interface TopProductoVendido {
         String getNombre();
-
         Long getTotal();
-
         String getImagenUrl();
+    }
+
+    interface VentaPorCategoria {
+        String getCategoria();
+        BigDecimal getTotal();
     }
 }

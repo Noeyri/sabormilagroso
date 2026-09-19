@@ -9,22 +9,40 @@
     <header th:replace="~{fragments/admin-layout :: topbar('Pedidos', 'pedidos')}"></header>
     <nav th:replace="~{fragments/admin-layout :: mobile-nav('pedidos')}"></nav>
 
-    <main class="p-6 md:p-10 max-w-6xl mx-auto space-y-8">
+    <main class="p-6 md:p-10 max-w-6xl mx-auto space-y-6">
         <div class="flex flex-wrap items-center justify-between gap-4">
             <h1 class="hidden lg:block font-headline-lg text-headline-lg text-on-surface">Pedidos</h1>
             <div class="flex gap-2 overflow-x-auto scrollbar-hide">
-                <button class="px-4 py-2 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md whitespace-nowrap">Todos</button>
-                <button class="px-4 py-2 rounded-full bg-white border border-outline-variant text-on-surface-variant font-label-md text-label-md whitespace-nowrap hover:bg-surface-container-low">En preparación</button>
-                <button class="px-4 py-2 rounded-full bg-white border border-outline-variant text-on-surface-variant font-label-md text-label-md whitespace-nowrap hover:bg-surface-container-low">En camino</button>
-                <button class="px-4 py-2 rounded-full bg-white border border-outline-variant text-on-surface-variant font-label-md text-label-md whitespace-nowrap hover:bg-surface-container-low">Entregado</button>
+                <a th:href="@{/admin/pedidos}" class="px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap"
+                   th:classappend="${filtroEstado == 'TODOS'} ? 'bg-primary-container text-on-primary-container' : 'bg-white border border-outline-variant text-on-surface-variant hover:bg-surface-container-low'">Todos</a>
+                <a th:href="@{/admin/pedidos(estado='Pendiente')}" class="px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap"
+                   th:classappend="${filtroEstado == 'Pendiente'} ? 'bg-primary-container text-on-primary-container' : 'bg-white border border-outline-variant text-on-surface-variant hover:bg-surface-container-low'">Pendiente</a>
+                <a th:href="@{/admin/pedidos(estado='En preparación')}" class="px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap"
+                   th:classappend="${filtroEstado == 'En preparación'} ? 'bg-primary-container text-on-primary-container' : 'bg-white border border-outline-variant text-on-surface-variant hover:bg-surface-container-low'">En preparación</a>
+                <a th:href="@{/admin/pedidos(estado='En camino')}" class="px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap"
+                   th:classappend="${filtroEstado == 'En camino'} ? 'bg-primary-container text-on-primary-container' : 'bg-white border border-outline-variant text-on-surface-variant hover:bg-surface-container-low'">En camino</a>
+                <a th:href="@{/admin/pedidos(estado='Entregado')}" class="px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap"
+                   th:classappend="${filtroEstado == 'Entregado'} ? 'bg-primary-container text-on-primary-container' : 'bg-white border border-outline-variant text-on-surface-variant hover:bg-surface-container-low'">Entregado</a>
+                <a th:href="@{/admin/pedidos(estado='Cancelado')}" class="px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap"
+                   th:classappend="${filtroEstado == 'Cancelado'} ? 'bg-primary-container text-on-primary-container' : 'bg-white border border-outline-variant text-on-surface-variant hover:bg-surface-container-low'">Cancelado</a>
             </div>
         </div>
 
+        <form th:action="@{/admin/pedidos}" method="get" class="bg-surface/90 border border-outline-variant p-4 rounded-xl flex flex-col md:flex-row gap-4">
+            <input type="hidden" name="estado" th:value="${filtroEstado}"/>
+            <div class="relative flex-1">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+                <input name="buscar" th:value="${filtroBuscar}" class="w-full pl-12 pr-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-body-md outline-none" placeholder="Buscar por código de pedido..." type="text"/>
+            </div>
+            <button type="submit" class="px-6 py-2.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-hover-orange transition-colors">Buscar</button>
+        </form>
+
         <div class="bg-white rounded-xl border border-surface-variant overflow-x-auto">
-            <table class="w-full text-left min-w-[640px]">
+            <table class="w-full text-left min-w-[760px]">
                 <thead class="bg-surface-container-low">
                     <tr>
                         <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Código</th>
+                        <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Cliente</th>
                         <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Fecha</th>
                         <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Productos</th>
                         <th class="px-5 py-3 font-label-sm text-label-sm text-on-surface-variant">Estado</th>
@@ -35,6 +53,7 @@
                 <tbody class="divide-y divide-outline-variant">
                     <tr th:each="p : ${pedidos}" class="hover:bg-surface-container-low">
                         <td class="px-5 py-4 font-label-md text-label-md text-on-surface" th:text="${p.codigo}">SM-0000</td>
+                        <td class="px-5 py-4 font-body-md text-body-md text-on-surface-variant" th:text="${p.clienteNombre}">Cliente</td>
                         <td class="px-5 py-4 font-body-md text-body-md text-on-surface-variant" th:text="${p.fecha}">Fecha</td>
                         <td class="px-5 py-4 font-body-md text-body-md text-on-surface-variant" th:text="${p.cantidadItems} + ' und.'">0 und.</td>
                         <td class="px-5 py-4">
@@ -46,6 +65,9 @@
                         <td class="px-5 py-4 text-right">
                             <a th:href="@{/admin/pedidos/{id}(id=${p.id})}" class="font-label-md text-label-md text-primary hover:text-hover-orange">Ver</a>
                         </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(pedidos)}">
+                        <td colspan="7" class="px-5 py-10 text-center font-body-md text-body-md text-on-surface-variant">No se encontraron pedidos con esos filtros.</td>
                     </tr>
                 </tbody>
             </table>

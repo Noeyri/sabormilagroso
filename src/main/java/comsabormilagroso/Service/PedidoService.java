@@ -18,10 +18,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -116,8 +118,8 @@ public class PedidoService {
     }
 
     @Transactional(readOnly = true)
-    public List<BigDecimal> ventasUltimos7Dias() {
-        LocalDate inicio = LocalDate.now().minusDays(6);
+    public List<BigDecimal> ventasUltimosNDias(int dias) {
+        LocalDate inicio = LocalDate.now().minusDays(dias - 1L);
         List<Pedido> recientes = pedidoRepository.findByFechaPedidoAfter(inicio.atStartOfDay());
         Map<LocalDate, BigDecimal> porDia = new HashMap<>();
         for (Pedido p : recientes) {
@@ -128,18 +130,52 @@ public class PedidoService {
             porDia.merge(p.getFechaPedido().toLocalDate(), p.getTotal(), BigDecimal::add);
         }
         List<BigDecimal> resultado = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < dias; i++) {
             resultado.add(porDia.getOrDefault(inicio.plusDays(i), BigDecimal.ZERO));
         }
         return resultado;
     }
 
     @Transactional(readOnly = true)
-    public List<String> etiquetasUltimos7Dias() {
-        return IntStream.rangeClosed(0, 6)
-                .mapToObj(i -> LocalDate.now().minusDays(6L - i))
-                .map(d -> d.format(DateTimeFormatter.ofPattern("EEE d", Locale.forLanguageTag("es-PE"))))
+    public List<String> etiquetasUltimosNDias(int dias) {
+        DateTimeFormatter formato = dias <= 14
+                ? DateTimeFormatter.ofPattern("EEE d", Locale.forLanguageTag("es-PE"))
+                : DateTimeFormatter.ofPattern("d MMM", Locale.forLanguageTag("es-PE"));
+        return IntStream.range(0, dias)
+                .mapToObj(i -> LocalDate.now().minusDays(dias - 1L - i))
+                .map(d -> d.format(formato))
                 .toList();
+    }
+
+    public List<BigDecimal> ventasUltimos7Dias() {
+        return ventasUltimosNDias(7);
+    }
+
+    public List<String> etiquetasUltimos7Dias() {
+        return etiquetasUltimosNDias(7);
+    }
+
+    @Transactional(readOnly = true)
+    public List<BigDecimal> ventasPorMesEsteAnio() {
+        int anioActual = LocalDate.now().getYear();
+        Map<Integer, BigDecimal> porMes = new HashMap<>();
+        for (Pedido p : pedidoRepository.findAll()) {
+            if (p.getFechaPedido() == null || p.getTotal() == null || "CANCELADO".equals(p.getEstado())) {
+                continue;
+            }
+            if (p.getFechaPedido().getYear() == anioActual) {
+                porMes.merge(p.getFechaPedido().getMonthValue(), p.getTotal(), BigDecimal::add);
+            }
+        }
+        List<BigDecimal> resultado = new ArrayList<>();
+        for (int mes = 1; mes <= 12; mes++) {
+            resultado.add(porMes.getOrDefault(mes, BigDecimal.ZERO));
+        }
+        return resultado;
+    }
+
+    public List<String> etiquetasMeses() {
+        return List.of("Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic");
     }
 
     @Transactional(readOnly = true)
@@ -147,6 +183,21 @@ public class PedidoService {
         return pedidoRepository.topProductosVendidos().stream().limit(limite)
                 .map(tp -> new ProductoVendidoDTO(tp.getNombre(), tp.getTotal(), tp.getImagenUrl()))
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Long> contarPedidosPorEstado() {
+        return pedidoRepository.findAll().stream()
+                .collect(Collectors.groupingBy(p -> formatearEstado(p.getEstado()), Collectors.counting()));
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, BigDecimal> ventasPorCategoria() {
+        Map<String, BigDecimal> resultado = new LinkedHashMap<>();
+        for (PedidoRepository.VentaPorCategoria v : pedidoRepository.ventasPorCategoria()) {
+            resultado.put(v.getCategoria(), v.getTotal() == null ? BigDecimal.ZERO : v.getTotal());
+        }
+        return resultado;
     }
 
     private String formatearEstado(String estado) {
@@ -179,7 +230,11 @@ public class PedidoService {
                         ip.getPrecioUnitario().doubleValue())).toList();
         String fecha = p.getFechaPedido() == null ? "" :
                 p.getFechaPedido().format(DateTimeFormatter.ofPattern("d MMM uuuu, h:mm a"));
+        Usuario usuario = p.getUsuario();
         return new PedidoDTO(p.getId(), p.getCodigo(), fecha, formatearEstado(p.getEstado()),
-                p.getDireccionEnvio(), formatearMetodoPago(p.getMetodoPago()), items);
+                p.getDireccionEnvio(), formatearMetodoPago(p.getMetodoPago()), items,
+                usuario != null ? usuario.getNombre() : "Cliente eliminado",
+                usuario != null ? usuario.getEmail() : "—",
+                usuario != null ? usuario.getTelefono() : "—");
     }
 }

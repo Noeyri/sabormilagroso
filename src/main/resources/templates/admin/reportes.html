@@ -12,15 +12,16 @@
     <main class="p-6 md:p-10 max-w-6xl mx-auto space-y-8">
         <div class="flex flex-wrap items-center justify-between gap-4">
             <h1 class="hidden lg:block font-headline-lg text-headline-lg text-on-surface">Reportes</h1>
-            <select class="px-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest font-label-md text-label-md text-on-surface outline-none">
-                <option>Últimos 7 días</option>
-                <option>Últimos 30 días</option>
-                <option>Este año</option>
+            <select onchange="window.location.href='/admin/reportes?rango=' + this.value"
+                    class="px-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest font-label-md text-label-md text-on-surface outline-none">
+                <option value="7" th:selected="${rangoActual == '7'}">Últimos 7 días</option>
+                <option value="30" th:selected="${rangoActual == '30'}">Últimos 30 días</option>
+                <option value="anio" th:selected="${rangoActual == 'anio'}">Este año</option>
             </select>
         </div>
 
         <!-- Métricas -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="bg-white p-6 rounded-xl border border-surface-variant space-y-2">
                 <span class="material-symbols-outlined text-primary text-[28px]">payments</span>
                 <p class="font-headline-md text-headline-md text-on-surface" th:text="'S/ ' + ${#numbers.formatDecimal(ventasTotales, 1, 2)}">S/ 0.00</p>
@@ -33,23 +34,31 @@
             </div>
             <div class="bg-white p-6 rounded-xl border border-surface-variant space-y-2">
                 <span class="material-symbols-outlined text-secondary text-[28px]">group</span>
-                <p class="font-headline-md text-headline-md text-on-surface" th:text="${#lists.size(usuarios)}">0</p>
-                <p class="font-label-sm text-label-sm text-on-surface-variant">Clientes activos</p>
+                <p class="font-headline-md text-headline-md text-on-surface" th:text="${clientesActivos}">0</p>
+                <p class="font-label-sm text-label-sm text-on-surface-variant">Clientes registrados</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-surface-variant space-y-2">
+                <span class="material-symbols-outlined text-primary text-[28px]">receipt</span>
+                <p class="font-headline-md text-headline-md text-on-surface" th:text="'S/ ' + ${#numbers.formatDecimal(ticketPromedio, 1, 2)}">S/ 0.00</p>
+                <p class="font-label-sm text-label-sm text-on-surface-variant">Ticket promedio</p>
             </div>
         </div>
 
-        <!-- Gráfico de ventas por día (datos reales) -->
+        <!-- Gráfica de ventas por período (interactiva) -->
         <div class="bg-white rounded-xl border border-surface-variant p-6 space-y-4">
-            <h2 class="font-headline-sm text-headline-sm text-on-surface">Ventas por día</h2>
-            <div class="h-64 flex items-end gap-3 px-2">
-                <div th:each="v, iter : ${ventasUltimos7}"
-                     class="flex-1 rounded-t-lg"
-                     th:classappend="${iter.odd} ? 'bg-primary-fixed' : 'bg-primary'"
-                     th:style="|height: ${alturasVentas[iter.index]}%|"
-                     th:title="|${etiquetasVentas[iter.index]}: S/ ${#numbers.formatDecimal(v, 1, 2)}|"></div>
+            <h2 class="font-headline-sm text-headline-sm text-on-surface">Ventas por período</h2>
+            <div class="w-full h-72"><canvas id="ventasPeriodoChart"></canvas></div>
+        </div>
+
+        <!-- Pedidos por estado y ventas por categoría -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white rounded-xl border border-surface-variant p-6 space-y-4">
+                <h2 class="font-headline-sm text-headline-sm text-on-surface">Pedidos por estado</h2>
+                <div class="w-full h-64"><canvas id="pedidosEstadoChart"></canvas></div>
             </div>
-            <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant px-2">
-                <span th:each="e : ${etiquetasVentas}" th:text="${e}">Lun</span>
+            <div class="bg-white rounded-xl border border-surface-variant p-6 space-y-4">
+                <h2 class="font-headline-sm text-headline-sm text-on-surface">Ventas por categoría</h2>
+                <div class="w-full h-64"><canvas id="ventasCategoriaChart"></canvas></div>
             </div>
         </div>
 
@@ -63,10 +72,54 @@
                     <span class="flex-grow font-body-md text-body-md text-on-surface" th:text="${p.nombre}">Plato</span>
                     <span class="font-label-md text-label-md text-on-surface-variant" th:text="${p.total} + ' vendidos'">10 vendidos</span>
                 </div>
+                <p th:if="${#lists.isEmpty(topProductos)}" class="font-body-md text-body-md text-on-surface-variant">Aún no hay ventas registradas.</p>
             </div>
         </div>
     </main>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const colorPrimary = '#C0562F';
+        const colorPrimaryLight = 'rgba(192, 86, 47, 0.1)';
+        const colorTertiary = '#9A3B21';
+        const colorSuccess = '#5C8D61';
+        const colorVariant = '#D9534F';
+        const colorSecondary = '#705A51';
+        const paleta = [colorPrimary, colorTertiary, colorSuccess, colorVariant, colorSecondary, '#E0A96D'];
+
+        const etiquetasSerie = /*[[${etiquetasSerie}]]*/ [];
+        const ventasSerie = /*[[${ventasSerie}]]*/ [];
+        new Chart(document.getElementById('ventasPeriodoChart'), {
+            type: 'bar',
+            data: {
+                labels: etiquetasSerie,
+                datasets: [{ label: 'Ventas (S/)', data: ventasSerie, backgroundColor: colorPrimary, borderRadius: 6 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        });
+
+        const estadosLabels = /*[[${estadosLabels}]]*/ [];
+        const estadosValores = /*[[${estadosValores}]]*/ [];
+        new Chart(document.getElementById('pedidosEstadoChart'), {
+            type: 'doughnut',
+            data: { labels: estadosLabels, datasets: [{ data: estadosValores, backgroundColor: paleta }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        });
+
+        const categoriasLabels = /*[[${categoriasLabels}]]*/ [];
+        const categoriasValores = /*[[${categoriasValores}]]*/ [];
+        new Chart(document.getElementById('ventasCategoriaChart'), {
+            type: 'bar',
+            data: {
+                labels: categoriasLabels,
+                datasets: [{ label: 'Ventas (S/)', data: categoriasValores, backgroundColor: colorTertiary, borderRadius: 6 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } } }
+        });
+    });
+</script>
 
 </body>
 </html>

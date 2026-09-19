@@ -27,6 +27,10 @@ public class ProductoService {
         return productoRepository.findByRecomendadoTrue().stream().map(this::toDTO).toList();
     }
 
+    public List<ProductoDTO> obtenerDisponibles() {
+        return productoRepository.findByDisponibleTrue().stream().map(this::toDTO).toList();
+    }
+
     public List<ProductoDTO> obtenerEnPromocion() {
         return productoRepository.findByPrecioAnteriorIsNotNullAndPrecioAnteriorGreaterThan(BigDecimal.ZERO)
                 .stream().map(this::toDTO).toList();
@@ -65,6 +69,6 @@ public class ProductoService {
                 p.getImagenUrl(), Boolean.TRUE.equals(p.getPopular()),
                 Boolean.TRUE.equals(p.getRecomendado()),
                 p.getCalificacion() == null ? null : p.getCalificacion().doubleValue(),
-                p.getTiempoPreparacionMin(), p.getStock());
+                p.getTiempoPreparacionMin(), p.getStock(), Boolean.TRUE.equals(p.getDisponible()));
     }
 }

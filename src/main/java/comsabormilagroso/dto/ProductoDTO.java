@@ -7,13 +7,14 @@ public class ProductoDTO {
     private String descripcion;
     private String descripcionLarga;
     private Double precio;
-    private Double precioAnterior; // null si no está en promoción
+    private Double precioAnterior;
     private String imagenUrl;
     private boolean popular;
     private boolean recomendado;
     private Double calificacion;
     private Integer tiempoPreparacionMin;
     private Integer stock;
+    private boolean disponible = true;
 
     public ProductoDTO() {
     }
@@ -22,12 +23,19 @@ public class ProductoDTO {
                         Double precio, Double precioAnterior, String imagenUrl, boolean popular, boolean recomendado,
                         Double calificacion, Integer tiempoPreparacionMin) {
         this(id, nombre, categoria, descripcion, descripcionLarga, precio, precioAnterior, imagenUrl,
-                popular, recomendado, calificacion, tiempoPreparacionMin, null);
+                popular, recomendado, calificacion, tiempoPreparacionMin, null, true);
     }
 
     public ProductoDTO(Long id, String nombre, String categoria, String descripcion, String descripcionLarga,
                         Double precio, Double precioAnterior, String imagenUrl, boolean popular, boolean recomendado,
                         Double calificacion, Integer tiempoPreparacionMin, Integer stock) {
+        this(id, nombre, categoria, descripcion, descripcionLarga, precio, precioAnterior, imagenUrl,
+                popular, recomendado, calificacion, tiempoPreparacionMin, stock, true);
+    }
+
+    public ProductoDTO(Long id, String nombre, String categoria, String descripcion, String descripcionLarga,
+                        Double precio, Double precioAnterior, String imagenUrl, boolean popular, boolean recomendado,
+                        Double calificacion, Integer tiempoPreparacionMin, Integer stock, boolean disponible) {
         this.id = id;
         this.nombre = nombre;
         this.categoria = categoria;
@@ -41,6 +49,7 @@ public class ProductoDTO {
         this.calificacion = calificacion;
         this.tiempoPreparacionMin = tiempoPreparacionMin;
         this.stock = stock;
+        this.disponible = disponible;
     }
 
     public Long getId() { return id; }
@@ -81,6 +90,9 @@ public class ProductoDTO {
 
     public Integer getStock() { return stock; }
     public void setStock(Integer stock) { this.stock = stock; }
+
+    public boolean isDisponible() { return disponible; }
+    public void setDisponible(boolean disponible) { this.disponible = disponible; }
 
     public boolean isEnPromocion() {
         return precioAnterior != null && precioAnterior > precio;

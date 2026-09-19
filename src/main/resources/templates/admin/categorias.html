@@ -41,6 +41,13 @@
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         <button type="submit" class="font-label-md text-label-md text-primary hover:text-hover-orange whitespace-nowrap">Guardar</button>
                     </form>
+                                        <form th:action="@{/admin/categorias/{id}/toggle(id=${c.id})}" method="post" class="inline">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="font-label-md text-label-md whitespace-nowrap"
+                                th:classappend="${c.activa} ? 'text-on-surface-variant hover:text-error' : 'text-success-green hover:text-success-green/80'">
+                            <span th:text="${c.activa} ? 'Desactivar' : 'Activar'">Estado</span>
+                        </button>
+                    </form>
                     <form th:action="@{/admin/categorias/{id}/eliminar(id=${c.id})}" method="post" class="inline" onsubmit="return confirm('¿Eliminar esta categoría?');">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         <button type="submit" class="font-label-md text-label-md text-error hover:text-error/80">Eliminar</button>

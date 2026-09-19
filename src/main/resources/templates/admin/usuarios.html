@@ -15,9 +15,9 @@
         <div class="bg-surface/90 border border-outline-variant p-4 rounded-xl flex flex-col md:flex-row gap-4">
             <div class="relative flex-1">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
-                <input class="w-full pl-12 pr-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-body-md outline-none" placeholder="Buscar por nombre o correo..." type="text"/>
+                <input id="buscarUsuario" class="w-full pl-12 pr-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-body-md outline-none" placeholder="Buscar por nombre o correo..." type="text"/>
             </div>
-            <select class="px-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest font-label-md text-label-md text-on-surface outline-none">
+            <select id="filtroRol" class="px-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest font-label-md text-label-md text-on-surface outline-none">
                 <option>Todos los roles</option>
                 <option>Cliente</option>
                 <option>Administrador</option>
@@ -36,8 +36,9 @@
                         <th class="px-5 py-3"></th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-outline-variant">
-                    <tr th:each="u : ${usuarios}" class="hover:bg-surface-container-low">
+                <tbody id="usuariosBody" class="divide-y divide-outline-variant">
+                    <tr th:each="u : ${usuarios}" class="usuario-row hover:bg-surface-container-low"
+                        th:attr="data-nombre=${#strings.toLowerCase(u.nombre)},data-email=${#strings.toLowerCase(u.email)},data-rol=${u.rol}">
                         <td class="px-5 py-4">
                             <div class="flex items-center gap-3">
                                 <div class="w-9 h-9 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-label-sm text-label-sm" th:text="${u.iniciales}">SM</div>
@@ -69,6 +70,27 @@
         </div>
     </main>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var buscar = document.getElementById('buscarUsuario');
+        var filtro = document.getElementById('filtroRol');
+        var filas = document.querySelectorAll('.usuario-row');
+
+        function aplicarFiltros() {
+            var termino = buscar.value.toLowerCase().trim();
+            var rol = filtro.value;
+            filas.forEach(function (fila) {
+                var coincideTexto = fila.dataset.nombre.includes(termino) || fila.dataset.email.includes(termino);
+                var coincideRol = (rol === 'Todos los roles' || fila.dataset.rol === rol);
+                fila.style.display = (coincideTexto && coincideRol) ? '' : 'none';
+            });
+        }
+
+        if (buscar) buscar.addEventListener('input', aplicarFiltros);
+        if (filtro) filtro.addEventListener('change', aplicarFiltros);
+    });
+</script>
 
 </body>
 </html>

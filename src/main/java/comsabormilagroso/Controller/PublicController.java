@@ -66,17 +66,23 @@ public class PublicController {
 
     @GetMapping("/menu")
     public String menu(Model model) {
-        model.addAttribute("productos", productoService.obtenerTodos());
-        model.addAttribute("categorias", productoService.obtenerTodos().stream().map(ProductoDTO::getCategoria).distinct().toList());
+        List<ProductoDTO> productos = productoService.obtenerDisponibles();
+        model.addAttribute("productos", productos);
+        model.addAttribute("categorias", productos.stream().map(ProductoDTO::getCategoria).distinct().toList());
         return "public/menu";
     }
-
     @GetMapping("/producto/{id}")
     public String detalleProducto(@PathVariable Long id, Model model) {
+        List<ProductoDTO> productos = productoService.obtenerTodos();
         ProductoDTO producto = productoService.obtenerPorId(id)
-                .orElseGet(() -> productoService.obtenerTodos().get(0));
+                .orElseGet(() -> productos.isEmpty() ? null : productos.get(0));
+
+        if (producto == null) {
+            return "redirect:/menu";
+        }
+
         model.addAttribute("producto", producto);
-        model.addAttribute("relacionados", productoService.obtenerTodos().stream()
+        model.addAttribute("relacionados", productos.stream()
                 .filter(p -> !p.getId().equals(producto.getId()))
                 .limit(3)
                 .toList());
