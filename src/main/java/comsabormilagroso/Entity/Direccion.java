@@ -28,6 +28,12 @@ public class Direccion {
 
     private Boolean predeterminada = false;
 
+    @Column(columnDefinition = "DECIMAL(10,7)")
+    private Double latitud;
+
+    @Column(columnDefinition = "DECIMAL(10,7)")
+    private Double longitud;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;

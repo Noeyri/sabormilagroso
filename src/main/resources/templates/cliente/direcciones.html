@@ -12,7 +12,7 @@
     <main class="p-6 md:p-10 max-w-3xl mx-auto space-y-8">
         <div class="flex items-center justify-between">
             <h1 class="hidden lg:block font-headline-lg text-headline-lg text-on-surface">Mis direcciones</h1>
-            <button type="button" class="ml-auto inline-flex items-center gap-2 bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-full hover:bg-hover-orange transition-colors duration-300" th:onclick="|showToast('Formulario de nueva dirección (modo demostración).')|">
+            <button type="button" id="btn-abrir-modal-direccion" class="ml-auto inline-flex items-center gap-2 bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-full hover:bg-hover-orange transition-colors duration-300">
                 <span class="material-symbols-outlined text-[18px]">add</span> Agregar dirección
             </button>
         </div>
@@ -41,6 +41,72 @@
         </div>
     </main>
 </div>
+
+<!-- Modal: agregar dirección -->
+<div id="modal-direccion" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div class="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between p-6 border-b border-surface-variant">
+            <h2 class="font-headline-sm text-headline-sm text-on-surface">Nueva dirección</h2>
+            <button type="button" id="btn-cerrar-modal-direccion" class="text-outline hover:text-on-surface">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <form th:action="@{/cliente/direcciones/guardar}" method="post" class="p-6 space-y-5">
+            <div>
+                <label class="font-label-md text-label-md text-on-surface block mb-2" for="etiqueta">Etiqueta</label>
+                <input id="etiqueta" name="etiqueta" type="text" required="required" placeholder="Casa, Trabajo, etc."
+                       class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
+            </div>
+
+            <div>
+                <label class="font-label-md text-label-md text-on-surface block mb-2" for="buscador-ubicacion">Buscar dirección</label>
+                <div class="flex gap-2">
+                    <input id="buscador-ubicacion" type="text" placeholder="Ej: Av. San Martín 123, Ica"
+                           class="flex-1 px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
+                    <button type="button" id="btn-buscar-ubicacion" class="px-4 py-3 rounded-lg bg-surface-container text-on-surface hover:bg-surface-variant transition-colors duration-300">
+                        <span class="material-symbols-outlined text-[20px]">search</span>
+                    </button>
+                </div>
+                <p id="mensaje-buscador" class="font-label-sm text-label-sm text-on-surface-variant mt-2">Busca tu dirección o ajusta el marcador manualmente en el mapa.</p>
+            </div>
+
+            <div id="mapa-direccion" class="h-64 rounded-2xl overflow-hidden border border-outline-variant" aria-label="Selecciona la ubicación en el mapa"></div>
+
+            <input id="input-latitud" name="latitud" type="hidden"/>
+            <input id="input-longitud" name="longitud" type="hidden"/>
+
+            <div>
+                <label class="font-label-md text-label-md text-on-surface block mb-2" for="direccion">Dirección</label>
+                <input id="direccion" name="direccion" type="text" required="required" placeholder="Calle, número"
+                       class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
+            </div>
+
+            <div>
+                <label class="font-label-md text-label-md text-on-surface block mb-2" for="distrito">Distrito</label>
+                <input id="distrito" name="distrito" type="text" placeholder="Ica"
+                       class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
+            </div>
+
+            <div>
+                <label class="font-label-md text-label-md text-on-surface block mb-2" for="referencia">Referencia</label>
+                <textarea id="referencia" name="referencia" rows="2" placeholder="Frente al parque, casa de rejas verdes, etc."
+                          class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"></textarea>
+            </div>
+
+            <button type="submit" class="w-full bg-primary text-on-primary font-label-md text-label-md py-4 rounded-full hover:bg-hover-orange transition-colors duration-300">
+                Guardar dirección
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Leaflet (OpenStreetMap) - sin API key, sin costo -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script th:src="@{/js/mapa-direcciones.js}" defer="defer"></script>
 
 </body>
 </html>
