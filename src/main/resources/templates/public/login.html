@@ -13,6 +13,12 @@
         </div>
 
         <form th:action="@{/login}" method="post" class="space-y-6">
+            <div th:if="${param.registrado}" class="bg-green-50 border border-green-200 text-green-700 font-body-md text-body-md px-4 py-3 rounded-lg">
+                Cuenta creada correctamente. Ya puedes iniciar sesión.
+            </div>
+            <div th:if="${param.restablecido}" class="bg-green-50 border border-green-200 text-green-700 font-body-md text-body-md px-4 py-3 rounded-lg">
+                Contraseña actualizada. Inicia sesión con tu nueva contraseña.
+            </div>
             <div th:if="${param.error}" class="bg-red-50 border border-red-200 text-red-700 font-body-md text-body-md px-4 py-3 rounded-lg">
                 Credenciales incorrectas. Inténtalo de nuevo.
             </div>
