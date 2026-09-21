@@ -56,6 +56,61 @@ public class UsuarioService {
         return 1;
     }
 
+    /*
+       Actualiza nombre, correo, teléfono y (opcionalmente) la contraseña.
+       Devuelve el mensaje de error o null si todo salió bien.
+       Primero valida todo y solo después modifica la entidad.
+     */
+    public String actualizarPerfil(Usuario usuario, String nombre, String email, String telefono,
+                                   String passwordActual, String passwordNueva, String passwordConfirmar) {
+        nombre = limpiar(nombre);
+        email = limpiar(email);
+        telefono = limpiar(telefono);
+        passwordActual = passwordActual == null ? "" : passwordActual;
+        passwordNueva = passwordNueva == null ? "" : passwordNueva;
+        passwordConfirmar = passwordConfirmar == null ? "" : passwordConfirmar;
+
+        if (nombre.isEmpty() || nombre.length() > 100) {
+            return "Ingresa un nombre válido (máximo 100 caracteres).";
+        }
+        if (email.isEmpty() || email.length() > 100 || !email.contains("@")) {
+            return "Ingresa un correo electrónico válido.";
+        }
+        if (telefono.length() > 30) {
+            return "El teléfono no puede superar los 30 caracteres.";
+        }
+
+        if (!email.equals(usuario.getEmail())) {
+            Optional<Usuario> otro = usuarioRepository.findByEmail(email);
+            if (otro.isPresent() && !otro.get().getId().equals(usuario.getId())) {
+                return "Ese correo ya está registrado en otra cuenta.";
+            }
+        }
+
+        boolean cambiaPassword = !passwordActual.isEmpty() || !passwordNueva.isEmpty()
+                || !passwordConfirmar.isEmpty();
+        if (cambiaPassword) {
+            if (!passwordEncoder.matches(passwordActual, usuario.getPassword())) {
+                return "La contraseña actual no es correcta.";
+            }
+            if (passwordNueva.length() < 6) {
+                return "La nueva contraseña debe tener al menos 6 caracteres.";
+            }
+            if (!passwordNueva.equals(passwordConfirmar)) {
+                return "La nueva contraseña y su confirmación no coinciden.";
+            }
+        }
+
+        usuario.setNombre(nombre);
+        usuario.setEmail(email);
+        usuario.setTelefono(telefono.isEmpty() ? null : telefono);
+        if (cambiaPassword) {
+            usuario.setPassword(passwordEncoder.encode(passwordNueva));
+        }
+        usuarioRepository.save(usuario);
+        return null;
+    }
+
     public UsuarioClienteDTO obtenerComoCliente(Usuario usuario) {
         String miembro = usuario.getFechaCreacion() == null ? "" :
                 usuario.getFechaCreacion().format(DateTimeFormatter.ofPattern("MMMM yyyy"));
@@ -83,5 +138,9 @@ public class UsuarioService {
 
     public Usuario guardar(Usuario usuario) {
         return usuarioRepository.save(usuario);
+    }
+
+    private String limpiar(String valor) {
+        return valor == null ? "" : valor.trim();
     }
 }

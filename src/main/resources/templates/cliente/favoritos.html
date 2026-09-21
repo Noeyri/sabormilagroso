@@ -16,9 +16,12 @@
             <div th:each="p : ${favoritos}" class="bg-white rounded-xl overflow-hidden border border-surface-variant hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
                 <div class="h-44 relative overflow-hidden">
                     <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" th:src="${p.imagenUrl}" th:alt="${p.nombre}"/>
-                    <button type="button" aria-label="Quitar de favoritos" class="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 text-error flex items-center justify-center shadow-sm" th:onclick="|showToast('Eliminado de favoritos (modo demostración).')|">
-                        <span class="material-symbols-outlined text-[20px]">favorite</span>
-                    </button>
+                    <form th:action="@{/cliente/favoritos/{id}/toggle(id=${p.id})}" method="post" class="absolute top-3 right-3">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" aria-label="Quitar de favoritos" class="w-9 h-9 rounded-full bg-white/90 text-error flex items-center justify-center shadow-sm hover:bg-white transition-colors">
+                            <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                        </button>
+                    </form>
                 </div>
                 <div class="p-5 space-y-3">
                     <h3 class="font-headline-sm text-headline-sm text-on-surface" th:text="${p.nombre}">Plato</h3>

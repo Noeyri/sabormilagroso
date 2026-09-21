@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<th:block th:fragment="corazon(productoId)">
+
+    <!-- Cliente con sesión: corazón funcional -->
+    <form th:if="${usuarioAutenticado and !esAdmin}"
+          th:with="esFav=${favoritosIds != null and favoritosIds.contains(productoId)}"
+          th:action="@{/cliente/favoritos/{id}/toggle(id=${productoId})}"
+          method="post" class="form-favorito">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <button type="submit"
+                th:aria-label="${esFav} ? 'Quitar de favoritos' : 'Agregar a favoritos'"
+                class="btn-favorito w-10 h-10 rounded-full bg-white/90 text-error flex items-center justify-center shadow-sm hover:bg-white transition-colors">
+            <span class="material-symbols-outlined text-[22px]"
+                  th:style="${esFav} ? 'font-variation-settings: \'FILL\' 1;' : 'font-variation-settings: \'FILL\' 0;'">favorite</span>
+        </button>
+    </form>
+
+    <!-- Visitante sin sesión: lleva al login -->
+    <a th:if="${!usuarioAutenticado}" th:href="@{/login}" aria-label="Inicia sesión para guardar favoritos"
+       class="w-10 h-10 rounded-full bg-white/90 text-on-surface-variant flex items-center justify-center shadow-sm hover:bg-white hover:text-error transition-colors">
+        <span class="material-symbols-outlined text-[22px]">favorite</span>
+    </a>
+
+</th:block>
+
+</body>
+</html>

@@ -14,40 +14,45 @@
             <span class="material-symbols-outlined text-[18px]">arrow_back</span> Volver al perfil
         </a>
 
-        <form data-mock-submit="Perfil actualizado correctamente (modo demostración)." class="bg-white rounded-xl border border-surface-variant p-6 md:p-8 space-y-6">
+        <form th:action="@{/cliente/perfil/editar}" method="post" class="bg-white rounded-xl border border-surface-variant p-6 md:p-8 space-y-6">
             <h1 class="font-headline-md text-headline-md text-on-surface">Editar perfil</h1>
+
+            <div th:if="${error}" class="bg-red-50 border border-red-200 text-red-700 font-body-md text-body-md px-4 py-3 rounded-lg" th:text="${error}">Error</div>
 
             <div>
                 <label class="font-label-md text-label-md text-on-surface block mb-2" for="nombre">Nombre completo</label>
-                <input id="nombre" name="nombre" type="text" th:value="${usuarioActual.nombre}" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
+                <input id="nombre" name="nombre" type="text" required="required" maxlength="100" th:value="${nombreForm ?: usuarioActual.nombre}" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
             </div>
             <div>
                 <label class="font-label-md text-label-md text-on-surface block mb-2" for="email">Correo electrónico</label>
-                <input id="email" name="email" type="email" th:value="${usuarioActual.email}" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
+                <input id="email" name="email" type="email" required="required" maxlength="100" th:value="${emailForm ?: usuarioActual.email}" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
+                <p class="font-label-sm text-label-sm text-on-surface-variant mt-2">Si cambias tu correo, deberás iniciar sesión de nuevo con el correo nuevo.</p>
             </div>
             <div>
                 <label class="font-label-md text-label-md text-on-surface block mb-2" for="telefono">Teléfono</label>
-                <input id="telefono" name="telefono" type="tel" th:value="${usuarioActual.telefono}" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
+                <input id="telefono" name="telefono" type="tel" maxlength="30" th:value="${telefonoForm ?: usuarioActual.telefono}" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
             </div>
 
             <hr class="border-outline-variant"/>
 
             <h2 class="font-headline-sm text-headline-sm text-on-surface">Cambiar contraseña</h2>
+            <p class="font-label-sm text-label-sm text-on-surface-variant -mt-4">Déjalo en blanco si no quieres cambiarla.</p>
             <div>
                 <label class="font-label-md text-label-md text-on-surface block mb-2" for="password-actual">Contraseña actual</label>
-                <input id="password-actual" name="passwordActual" type="password" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="••••••••"/>
+                <input id="password-actual" name="passwordActual" type="password" autocomplete="current-password" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="••••••••"/>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="font-label-md text-label-md text-on-surface block mb-2" for="password-nueva">Nueva contraseña</label>
-                    <input id="password-nueva" name="passwordNueva" type="password" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="••••••••"/>
+                    <input id="password-nueva" name="passwordNueva" type="password" autocomplete="new-password" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="••••••••"/>
                 </div>
                 <div>
                     <label class="font-label-md text-label-md text-on-surface block mb-2" for="password-confirmar">Confirmar contraseña</label>
-                    <input id="password-confirmar" name="passwordConfirmar" type="password" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="••••••••"/>
+                    <input id="password-confirmar" name="passwordConfirmar" type="password" autocomplete="new-password" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md" placeholder="••••••••"/>
                 </div>
             </div>
 
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <div class="flex gap-4 pt-4">
                 <button type="submit" class="bg-primary text-on-primary font-label-md text-label-md px-8 py-3 rounded-full hover:bg-hover-orange transition-colors duration-300">
                     Guardar cambios

@@ -11,7 +11,9 @@
 
     <main class="p-6 md:p-10 max-w-3xl mx-auto space-y-8">
         <h1 class="hidden lg:block font-headline-lg text-headline-lg text-on-surface">Mi perfil</h1>
-
+        <div th:if="${param.actualizado}" class="bg-green-50 border border-green-200 text-green-700 font-body-md text-body-md px-4 py-3 rounded-lg">
+            Perfil actualizado correctamente.
+        </div>
         <div class="bg-white rounded-xl border border-surface-variant p-6 md:p-8 space-y-8">
             <div class="flex items-center gap-5">
                 <div class="w-20 h-20 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-headline-sm text-headline-sm" th:text="${usuarioActual.iniciales}">RM</div>

@@ -63,6 +63,9 @@
                 
                 <div class="h-56 relative overflow-hidden bg-surface-container-low">
                     <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" th:src="${p.imagenUrl}" th:alt="${p.nombre}"/>
+                    <div class="absolute top-4 right-4 z-10">
+                        <th:block th:replace="~{fragments/favorito :: corazon(${p.id})}"></th:block>
+                    </div>
                     <div class="absolute top-4 left-4 flex gap-2">
                         <span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-sm text-label-sm shadow-sm" th:text="${p.categoria}">Categoría</span>
                         <span th:if="${p.popular}" class="bg-[#C0562F] text-white px-3 py-1 rounded-full font-label-sm text-label-sm shadow-sm flex items-center gap-1">

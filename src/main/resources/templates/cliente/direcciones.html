@@ -17,6 +17,13 @@
             </button>
         </div>
 
+        <!-- Avisos -->
+        <div th:if="${param.guardada}" class="bg-green-50 border border-green-200 text-green-700 font-body-md text-body-md px-4 py-3 rounded-lg">Dirección guardada correctamente.</div>
+        <div th:if="${param.actualizada}" class="bg-green-50 border border-green-200 text-green-700 font-body-md text-body-md px-4 py-3 rounded-lg">Dirección actualizada correctamente.</div>
+        <div th:if="${param.eliminada}" class="bg-green-50 border border-green-200 text-green-700 font-body-md text-body-md px-4 py-3 rounded-lg">Dirección eliminada.</div>
+        <div th:if="${param.predeterminada}" class="bg-green-50 border border-green-200 text-green-700 font-body-md text-body-md px-4 py-3 rounded-lg">Dirección predeterminada actualizada.</div>
+        <div th:if="${param.error}" class="bg-red-50 border border-red-200 text-red-700 font-body-md text-body-md px-4 py-3 rounded-lg">No se pudo completar la acción. Revisa los datos e inténtalo de nuevo.</div>
+
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6" th:if="${direcciones != null and !direcciones.isEmpty()}">
             <div th:each="d : ${direcciones}" class="bg-white rounded-xl border p-6 space-y-3 relative"
                  th:classappend="${d.predeterminada} ? 'border-primary' : 'border-surface-variant'">
@@ -28,9 +35,27 @@
                 <p class="font-body-md text-body-md text-on-surface-variant" th:text="${d.direccion}">Dirección</p>
                 <p class="font-body-md text-body-md text-on-surface-variant" th:text="${d.distrito}">Distrito</p>
                 <p class="font-label-sm text-label-sm text-on-surface-variant" th:text="${d.referencia}">Referencia</p>
-                <div class="flex gap-4 pt-2">
-                    <button type="button" class="font-label-md text-label-md text-primary hover:text-hover-orange" th:onclick="|showToast('Edición de dirección (modo demostración).')|">Editar</button>
-                    <button type="button" class="font-label-md text-label-md text-error hover:text-error/80" th:onclick="|showToast('Dirección eliminada (modo demostración).')|">Eliminar</button>
+
+                <div class="flex flex-wrap items-center gap-x-4 gap-y-2 pt-2">
+                    <button type="button" class="btn-editar-direccion font-label-md text-label-md text-primary hover:text-hover-orange"
+                            th:data-action="@{/cliente/direcciones/{id}/editar(id=${d.id})}"
+                            th:data-etiqueta="${d.etiqueta}"
+                            th:data-direccion="${d.direccion}"
+                            th:data-distrito="${d.distrito}"
+                            th:data-referencia="${d.referencia}"
+                            th:data-latitud="${d.latitud}"
+                            th:data-longitud="${d.longitud}">Editar</button>
+
+                    <form th:action="@{/cliente/direcciones/{id}/eliminar(id=${d.id})}" method="post" class="inline"
+                          onsubmit="return confirm('¿Eliminar esta dirección?');">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="font-label-md text-label-md text-error hover:text-error/80">Eliminar</button>
+                    </form>
+
+                    <form th:if="${!d.predeterminada}" th:action="@{/cliente/direcciones/{id}/predeterminada(id=${d.id})}" method="post" class="inline">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="font-label-md text-label-md text-on-surface-variant hover:text-primary">Usar como predeterminada</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -42,20 +67,20 @@
     </main>
 </div>
 
-<!-- Modal: agregar dirección -->
+<!-- Modal: agregar / editar dirección -->
 <div id="modal-direccion" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
     <div class="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div class="flex items-center justify-between p-6 border-b border-surface-variant">
-            <h2 class="font-headline-sm text-headline-sm text-on-surface">Nueva dirección</h2>
+            <h2 id="titulo-modal-direccion" class="font-headline-sm text-headline-sm text-on-surface">Nueva dirección</h2>
             <button type="button" id="btn-cerrar-modal-direccion" class="text-outline hover:text-on-surface">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
 
-        <form th:action="@{/cliente/direcciones/guardar}" method="post" class="p-6 space-y-5">
+        <form id="form-direccion" th:action="@{/cliente/direcciones/guardar}" method="post" class="p-6 space-y-5">
             <div>
                 <label class="font-label-md text-label-md text-on-surface block mb-2" for="etiqueta">Etiqueta</label>
-                <input id="etiqueta" name="etiqueta" type="text" required="required" placeholder="Casa, Trabajo, etc."
+                <input id="etiqueta" name="etiqueta" type="text" required="required" maxlength="50" placeholder="Casa, Trabajo, etc."
                        class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
             </div>
 
@@ -78,23 +103,23 @@
 
             <div>
                 <label class="font-label-md text-label-md text-on-surface block mb-2" for="direccion">Dirección</label>
-                <input id="direccion" name="direccion" type="text" required="required" placeholder="Calle, número"
+                <input id="direccion" name="direccion" type="text" required="required" maxlength="255" placeholder="Calle, número"
                        class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
             </div>
 
             <div>
                 <label class="font-label-md text-label-md text-on-surface block mb-2" for="distrito">Distrito</label>
-                <input id="distrito" name="distrito" type="text" placeholder="Ica"
+                <input id="distrito" name="distrito" type="text" maxlength="100" placeholder="Ica"
                        class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
             </div>
 
             <div>
                 <label class="font-label-md text-label-md text-on-surface block mb-2" for="referencia">Referencia</label>
-                <textarea id="referencia" name="referencia" rows="2" placeholder="Frente al parque, casa de rejas verdes, etc."
+                <textarea id="referencia" name="referencia" rows="2" maxlength="255" placeholder="Frente al parque, casa de rejas verdes, etc."
                           class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"></textarea>
             </div>
 
-            <button type="submit" class="w-full bg-primary text-on-primary font-label-md text-label-md py-4 rounded-full hover:bg-hover-orange transition-colors duration-300">
+            <button id="btn-guardar-direccion" type="submit" class="w-full bg-primary text-on-primary font-label-md text-label-md py-4 rounded-full hover:bg-hover-orange transition-colors duration-300">
                 Guardar dirección
             </button>
         </form>
