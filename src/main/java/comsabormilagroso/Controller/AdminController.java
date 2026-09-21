@@ -4,11 +4,15 @@ import comsabormilagroso.Entity.Categoria;
 import comsabormilagroso.Entity.Producto;
 import comsabormilagroso.Entity.Usuario;
 import comsabormilagroso.Service.CategoriaService;
+import comsabormilagroso.Service.ConfiguracionNegocioService;
 import comsabormilagroso.Service.PedidoService;
 import comsabormilagroso.Service.ProductoService;
 import comsabormilagroso.Service.UsuarioService;
 import comsabormilagroso.dto.PedidoDTO;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,13 +30,16 @@ public class AdminController {
     private final CategoriaService categoriaService;
     private final PedidoService pedidoService;
     private final UsuarioService usuarioService;
+    private final ConfiguracionNegocioService configuracionService;
 
     public AdminController(ProductoService productoService, CategoriaService categoriaService,
-                           PedidoService pedidoService, UsuarioService usuarioService) {
+                           PedidoService pedidoService, UsuarioService usuarioService,
+                           ConfiguracionNegocioService configuracionService) {
         this.productoService = productoService;
         this.categoriaService = categoriaService;
         this.pedidoService = pedidoService;
         this.usuarioService = usuarioService;
+        this.configuracionService = configuracionService;
     }
 
     @ModelAttribute("usuarioActual")
@@ -299,13 +306,71 @@ public class AdminController {
         return "admin/reportes";
     }
 
+    // ===================== CONFIGURACIÓN =====================
+
     @GetMapping("/configuracion")
-    public String configuracion() {
+    public String configuracion(Model model) {
+        model.addAttribute("config", configuracionService.obtener());
         return "admin/configuracion";
     }
+
+    @PostMapping("/configuracion")
+    public String guardarConfiguracion(@RequestParam String nombreNegocio,
+                                       @RequestParam(required = false) String direccionNegocio,
+                                       @RequestParam(required = false) String telefonoNegocio,
+                                       @RequestParam BigDecimal costoEnvio,
+                                       @RequestParam String horaApertura,
+                                       @RequestParam String horaCierre,
+                                       @RequestParam(defaultValue = "false") boolean notificarNuevoPedido,
+                                       @RequestParam(defaultValue = "false") boolean notificarStockBajo,
+                                       @RequestParam(defaultValue = "false") boolean notificarResumenSemanal,
+                                       Model model) {
+        String error = configuracionService.actualizar(nombreNegocio, direccionNegocio, telefonoNegocio,
+                costoEnvio, horaApertura, horaCierre,
+                notificarNuevoPedido, notificarStockBajo, notificarResumenSemanal);
+
+        if (error != null) {
+            model.addAttribute("error", error);
+            model.addAttribute("config", configuracionService.obtener());
+            return "admin/configuracion";
+        }
+        return "redirect:/admin/configuracion?guardado";
+    }
+
+    // ===================== PERFIL =====================
 
     @GetMapping("/perfil")
     public String perfil() {
         return "admin/perfil";
+    }
+
+    @PostMapping("/perfil")
+    public String guardarPerfil(@RequestParam String nombre,
+                                @RequestParam String email,
+                                @RequestParam(required = false) String passwordActual,
+                                @RequestParam(required = false) String passwordNueva,
+                                @RequestParam(required = false) String passwordConfirmar,
+                                Authentication auth, Model model,
+                                HttpServletRequest request, HttpServletResponse response) {
+        Usuario u = usuarioService.obtenerPorEmail(auth.getName()).orElse(null);
+        if (u == null) return "redirect:/login";
+
+        String emailAnterior = u.getEmail();
+        String error = usuarioService.actualizarPerfil(u, nombre, email, u.getTelefono(),
+                passwordActual, passwordNueva, passwordConfirmar);
+
+        if (error != null) {
+            model.addAttribute("error", error);
+            model.addAttribute("usuarioActual", usuarioService.obtenerComoAdmin(u));
+            return "admin/perfil";
+        }
+
+        // El correo es el identificador del login: si cambió, se cierra la sesión
+        // para que el usuario vuelva a entrar con el correo nuevo.
+        if (!emailAnterior.equals(email.trim())) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+            return "redirect:/login?emailActualizado";
+        }
+        return "redirect:/admin/perfil?actualizado";
     }
 }
