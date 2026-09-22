@@ -23,25 +23,36 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
 public class PedidoService {
 
-    private static final double ENVIO = 8.00;
+    // Estado -> estados a los que puede pasar directamente.
+    private static final Map<String, Set<String>> TRANSICIONES = Map.of(
+            "PENDIENTE", Set.of("EN_PREPARACION", "CANCELADO"),
+            "EN_PREPARACION", Set.of("EN_CAMINO", "CANCELADO"),
+            "EN_CAMINO", Set.of("ENTREGADO"),
+            "ENTREGADO", Set.of(),
+            "CANCELADO", Set.of()
+    );
 
     private final PedidoRepository pedidoRepository;
     private final PagoRepository pagoRepository;
     private final ProductoService productoService;
+    private final ConfiguracionNegocioService configuracionService;
 
     public PedidoService(PedidoRepository pedidoRepository, PagoRepository pagoRepository,
-                         ProductoService productoService) {
+                         ProductoService productoService, ConfiguracionNegocioService configuracionService) {
         this.pedidoRepository = pedidoRepository;
         this.pagoRepository = pagoRepository;
         this.productoService = productoService;
+        this.configuracionService = configuracionService;
     }
 
+    /** Lanza StockInsuficienteException si algún producto no tiene stock suficiente. */
     @Transactional
     public Pedido crearPedido(List<ItemPedidoDTO> items, Usuario usuario, String metodoPago,
                               String tipoEnvio, String direccionEnvio) {
@@ -55,6 +66,15 @@ public class PedidoService {
         BigDecimal total = BigDecimal.ZERO;
         for (ItemPedidoDTO item : items) {
             Producto producto = productoService.obtenerEntidad(item.getProductoId()).orElseThrow();
+
+            int stockActual = producto.getStock() == null ? 0 : producto.getStock();
+            if (stockActual < item.getCantidad()) {
+                throw new StockInsuficienteException(
+                        "No hay suficiente stock de \"" + producto.getNombre() + "\" (disponible: " + stockActual + ").");
+            }
+            producto.setStock(stockActual - item.getCantidad());
+            productoService.guardar(producto);
+
             BigDecimal precio = producto.getPrecio();
             BigDecimal subtotal = precio.multiply(BigDecimal.valueOf(item.getCantidad()));
             total = total.add(subtotal);
@@ -67,7 +87,7 @@ public class PedidoService {
             ip.setObservaciones(null);
             pedido.addItem(ip);
         }
-        total = total.add(BigDecimal.valueOf(ENVIO));
+        total = total.add(BigDecimal.valueOf(costoEnvio(tipoEnvio)));
         pedido.setTotal(total);
 
         Pedido guardado = pedidoRepository.save(pedido);
@@ -78,9 +98,72 @@ public class PedidoService {
         pago.setPedido(guardado);
         pago.setMetodoPago(metodoPago);
         pago.setMonto(total);
+        pago.setEstado("PENDIENTE"); // se confirma al entregar el pedido
         pagoRepository.save(pago);
 
         return guardado;
+    }
+
+    /** Costo de envío configurado por el negocio. Gratis si el cliente recoge en local. */
+    public double costoEnvio(String tipoEnvio) {
+        if ("LLEVAR".equals(tipoEnvio)) {
+            return 0.0;
+        }
+        BigDecimal costo = configuracionService.obtener().getCostoEnvio();
+        return costo == null ? 0.0 : costo.doubleValue();
+    }
+
+    /*
+       Cambia el estado del pedido validando que la transición sea válida.
+       Devuelve el mensaje de error, o null si todo salió bien.
+       Al pasar a ENTREGADO, el pago se marca como COMPLETADO.
+       Al pasar a CANCELADO, el pago se marca como CANCELADO y se devuelve el stock.
+     */
+    @Transactional
+    public String cambiarEstado(Long pedidoId, String nuevoEstado) {
+        Pedido pedido = pedidoRepository.findById(pedidoId).orElse(null);
+        if (pedido == null) {
+            return "El pedido no existe.";
+        }
+
+        String estadoActual = pedido.getEstado() == null ? "PENDIENTE" : pedido.getEstado();
+        Set<String> permitidos = TRANSICIONES.getOrDefault(estadoActual, Set.of());
+        if (!permitidos.contains(nuevoEstado)) {
+            return "No se puede pasar de \"" + formatearEstado(estadoActual) + "\" a \""
+                    + formatearEstado(nuevoEstado) + "\".";
+        }
+
+        pedido.setEstado(nuevoEstado);
+        pedidoRepository.save(pedido);
+
+        if ("CANCELADO".equals(nuevoEstado)) {
+            for (ItemPedido item : pedido.getItems()) {
+                Producto producto = item.getProducto();
+                int stockActual = producto.getStock() == null ? 0 : producto.getStock();
+                producto.setStock(stockActual + item.getCantidad());
+                productoService.guardar(producto);
+            }
+            pagoRepository.findByPedidoId(pedidoId).ifPresent(pago -> {
+                pago.setEstado("CANCELADO");
+                pagoRepository.save(pago);
+            });
+        } else if ("ENTREGADO".equals(nuevoEstado)) {
+            pagoRepository.findByPedidoId(pedidoId).ifPresent(pago -> {
+                pago.setEstado("COMPLETADO");
+                pagoRepository.save(pago);
+            });
+        }
+        return null;
+    }
+
+    // El cliente solo puede cancelar su propio pedido, y solo si es dueño de él.
+    @Transactional
+    public String cancelarComoCliente(Long pedidoId, Long usuarioId) {
+        Pedido pedido = pedidoRepository.findById(pedidoId).orElse(null);
+        if (pedido == null || pedido.getUsuario() == null || !pedido.getUsuario().getId().equals(usuarioId)) {
+            return "El pedido no existe.";
+        }
+        return cambiarEstado(pedidoId, "CANCELADO");
     }
 
     @Transactional(readOnly = true)

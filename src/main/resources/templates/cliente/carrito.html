@@ -11,7 +11,9 @@
 
     <main class="p-6 md:p-10 max-w-5xl mx-auto space-y-8">
         <h1 class="hidden lg:block font-headline-lg text-headline-lg text-on-surface">Mi carrito</h1>
-
+        <div th:if="${param.sinStock}" class="bg-red-50 border border-red-200 text-red-700 font-body-md text-body-md px-4 py-3 rounded-lg">
+            No hay suficiente stock para esa cantidad.
+        </div>
         <div th:if="${items != null and !items.isEmpty()}" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Lista de items -->
             <div class="lg:col-span-2 bg-white rounded-xl border border-surface-variant divide-y divide-outline-variant">
@@ -62,11 +64,11 @@
                 </div>
                 <div class="flex justify-between font-body-md text-body-md text-on-surface-variant">
                     <span>Envío</span>
-                    <span>S/ 8.00</span>
+                    <span th:text="'S/ ' + ${#numbers.formatDecimal(costoEnvio, 1, 2)}">S/ 8.00</span>
                 </div>
                 <div class="flex justify-between font-headline-sm text-headline-sm text-on-surface pt-3 border-t border-outline-variant">
                     <span>Total</span>
-                    <span th:text="'S/ ' + ${#numbers.formatDecimal(#aggregates.sum(items.![subtotal]) + 8.00, 1, 2)}">S/ 0.00</span>
+                    <span th:text="'S/ ' + ${#numbers.formatDecimal(#aggregates.sum(items.![subtotal]) + costoEnvio, 1, 2)}">S/ 0.00</span>
                 </div>
                 <a th:href="@{/cliente/checkout}" class="block text-center bg-primary text-on-primary font-label-md text-label-md py-4 rounded-full hover:bg-hover-orange transition-colors duration-300">
                     Ir a pagar

@@ -104,12 +104,13 @@ public class AdminController {
     }
 
     @PostMapping("/pedidos/{id}/estado")
-    public String cambiarEstadoPedido(@PathVariable Long id, @RequestParam String estado) {
-        pedidoService.obtenerEntidad(id).ifPresent(p -> {
-            p.setEstado(estado);
-            pedidoService.guardar(p);
-        });
-        return "redirect:/admin/pedidos";
+    public String cambiarEstadoPedido(@PathVariable Long id, @RequestParam String estado,
+                                      org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        String error = pedidoService.cambiarEstado(id, estado);
+        if (error != null) {
+            redirectAttributes.addFlashAttribute("error", error);
+        }
+        return "redirect:/admin/pedidos/" + id;
     }
 
     @GetMapping("/productos")
@@ -166,8 +167,12 @@ public class AdminController {
     }
 
     @PostMapping("/productos/{id}/eliminar")
-    public String eliminarProducto(@PathVariable Long id) {
-        productoService.eliminar(id);
+    public String eliminarProducto(@PathVariable Long id,
+                                   org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        if (!productoService.eliminar(id)) {
+            redirectAttributes.addFlashAttribute("error",
+                    "No se puede eliminar: el producto ya aparece en pedidos. Desactívalo en su lugar.");
+        }
         return "redirect:/admin/productos";
     }
 
@@ -205,8 +210,12 @@ public class AdminController {
     }
 
     @PostMapping("/categorias/{id}/eliminar")
-    public String eliminarCategoria(@PathVariable Long id) {
-        categoriaService.eliminar(id);
+    public String eliminarCategoria(@PathVariable Long id,
+                                    org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        if (!categoriaService.eliminar(id)) {
+            redirectAttributes.addFlashAttribute("error",
+                    "No se puede eliminar: la categoría todavía tiene productos. Muévelos o desactívala.");
+        }
         return "redirect:/admin/categorias";
     }
 

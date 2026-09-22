@@ -10,6 +10,7 @@
     <nav th:replace="~{fragments/admin-layout :: mobile-nav('pedidos')}"></nav>
 
     <main class="p-6 md:p-10 max-w-4xl mx-auto space-y-8">
+        <div th:if="${error}" class="bg-red-50 border border-red-200 text-red-700 font-body-md text-body-md px-4 py-3 rounded-lg" th:text="${error}">Error</div>
         <a th:href="@{/admin/pedidos}" class="hidden lg:inline-flex items-center gap-1 font-label-md text-label-md text-on-surface-variant hover:text-primary">
             <span class="material-symbols-outlined text-[18px]">arrow_back</span> Volver a pedidos
         </a>

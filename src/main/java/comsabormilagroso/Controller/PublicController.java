@@ -1,6 +1,7 @@
 package comsabormilagroso.Controller;
 
 import comsabormilagroso.Service.CarritoService;
+import comsabormilagroso.Service.ConfiguracionNegocioService;
 import comsabormilagroso.Service.ProductoService;
 import comsabormilagroso.Service.UsuarioService;
 import comsabormilagroso.dto.ItemPedidoDTO;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 public class PublicController {
@@ -26,12 +28,14 @@ public class PublicController {
     private final ProductoService productoService;
     private final CarritoService carritoService;
     private final UsuarioService usuarioService;
+    private final ConfiguracionNegocioService configuracionService;
 
     public PublicController(ProductoService productoService, CarritoService carritoService,
-                            UsuarioService usuarioService) {
+                            UsuarioService usuarioService, ConfiguracionNegocioService configuracionService) {
         this.productoService = productoService;
         this.carritoService = carritoService;
         this.usuarioService = usuarioService;
+        this.configuracionService = configuracionService;
     }
 
     @SuppressWarnings("unchecked")
@@ -93,13 +97,28 @@ public class PublicController {
     public String agregarCarrito(@RequestParam Long id, @RequestParam(defaultValue = "1") int cantidad,
                                  HttpSession session) {
         List<ItemPedidoDTO> carrito = carrito(session);
-        productoService.obtenerPorId(id).ifPresent(p -> carritoService.agregar(carrito, p, cantidad));
+        ProductoDTO producto = productoService.obtenerPorId(id).orElse(null);
+        if (producto == null) {
+            return "redirect:/menu";
+        }
+
+        int enCarrito = carrito.stream()
+                .filter(i -> Objects.equals(i.getProductoId(), id))
+                .mapToInt(ItemPedidoDTO::getCantidad).sum();
+        if (!productoService.hayStockDisponible(id, enCarrito + Math.max(cantidad, 0))) {
+            return "redirect:" + refererProducto(producto) + "?sinStock";
+        }
+
+        carritoService.agregar(carrito, producto, cantidad);
         return "redirect:/menu";
     }
 
     @PostMapping("/carrito/actualizar")
     public String actualizarCarrito(@RequestParam Long id, @RequestParam int cantidad,
                                     HttpSession session) {
+        if (cantidad > 0 && !productoService.hayStockDisponible(id, cantidad)) {
+            return "redirect:/carrito?sinStock";
+        }
         carritoService.actualizarCantidad(carrito(session), id, cantidad);
         return "redirect:/carrito";
     }
@@ -156,6 +175,11 @@ public class PublicController {
     @GetMapping("/carrito")
     public String carrito(HttpSession session, Model model) {
         model.addAttribute("items", carrito(session));
+        model.addAttribute("costoEnvio", configuracionService.obtener().getCostoEnvio());
         return "cliente/carrito";
+    }
+
+    private String refererProducto(ProductoDTO producto) {
+        return "/producto/" + producto.getId();
     }
 }

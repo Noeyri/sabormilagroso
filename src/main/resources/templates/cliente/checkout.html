@@ -85,11 +85,11 @@
                 </div>
                 <div class="flex justify-between font-body-md text-body-md text-on-surface-variant pt-2">
                     <span>Envío</span>
-                    <span>S/ 8.00</span>
+                    <span id="resumen-envio" th:text="'S/ ' + ${#numbers.formatDecimal(costoEnvioDelivery, 1, 2)}" th:attr="data-costo=${costoEnvioDelivery}">S/ 8.00</span>
                 </div>
                 <div class="flex justify-between font-headline-sm text-headline-sm text-on-surface pt-3 border-t border-outline-variant">
                     <span>Total</span>
-                    <span th:text="'S/ ' + ${#numbers.formatDecimal(#aggregates.sum(items.![subtotal]) + 8.00, 1, 2)}">S/ 0.00</span>
+                    <span id="resumen-total" th:text="'S/ ' + ${#numbers.formatDecimal(#aggregates.sum(items.![subtotal]) + costoEnvioDelivery, 1, 2)}" th:attr="data-subtotal=${#aggregates.sum(items.![subtotal])}">S/ 0.00</span>
                 </div>
                 <button type="submit" class="w-full bg-primary text-on-primary font-label-md text-label-md py-4 rounded-full hover:bg-hover-orange transition-colors duration-300">
                     Confirmar pedido
@@ -99,6 +99,23 @@
         </form>
     </main>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var spanEnvio = document.getElementById('resumen-envio');
+  var spanTotal = document.getElementById('resumen-total');
+  if (!spanEnvio || !spanTotal) return;
+  var costoDelivery = parseFloat(spanEnvio.dataset.costo);
+  var subtotal = parseFloat(spanTotal.dataset.subtotal);
 
+  document.querySelectorAll('input[name="tipoEnvio"]').forEach(function (radio) {
+    radio.addEventListener('change', function () {
+      var esRecoger = radio.value === 'LLEVAR' && radio.checked;
+      var envio = esRecoger ? 0 : costoDelivery;
+      spanEnvio.textContent = esRecoger ? 'Gratis' : 'S/ ' + envio.toFixed(2);
+      spanTotal.textContent = 'S/ ' + (subtotal + envio).toFixed(2);
+    });
+  });
+});
+</script>
 </body>
 </html>

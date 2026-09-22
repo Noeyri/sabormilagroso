@@ -15,15 +15,25 @@
             <span class="material-symbols-outlined text-[18px]">arrow_back</span> Volver a mis pedidos
         </a>
 
+        <div th:if="${error}" class="bg-red-50 border border-red-200 text-red-700 font-body-md text-body-md px-4 py-3 rounded-lg" th:text="${error}">Error</div>
+
         <div class="bg-white rounded-xl border border-surface-variant p-6 md:p-8 space-y-6">
             <div class="flex flex-wrap items-center justify-between gap-4">
                 <div>
                     <h1 class="font-headline-md text-headline-md text-on-surface" th:text="'Pedido ' + ${pedido.codigo}">Pedido</h1>
                     <p class="font-label-sm text-label-sm text-on-surface-variant" th:text="${pedido.fecha}">Fecha</p>
                 </div>
-                <span class="font-label-md text-label-md px-4 py-2 rounded-full"
-                      th:classappend="${pedido.estado == 'Entregado'} ? 'bg-success-green/15 text-success-green' : (${pedido.estado == 'Cancelado'} ? 'bg-error-container text-on-error-container' : 'bg-tertiary-fixed text-on-tertiary-fixed-variant')"
-                      th:text="${pedido.estado}">Estado</span>
+                <div class="flex items-center gap-3">
+                    <span class="font-label-md text-label-md px-4 py-2 rounded-full"
+                          th:classappend="${pedido.estado == 'Entregado'} ? 'bg-success-green/15 text-success-green' : (${pedido.estado == 'Cancelado'} ? 'bg-error-container text-on-error-container' : 'bg-tertiary-fixed text-on-tertiary-fixed-variant')"
+                          th:text="${pedido.estado}">Estado</span>
+                    <form th:if="${pedido.estado == 'Pendiente' or pedido.estado == 'En preparación'}"
+                          th:action="@{/cliente/pedidos/{id}/cancelar(id=${pedido.id})}" method="post"
+                          onsubmit="return confirm('¿Cancelar este pedido?');">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="font-label-md text-label-md text-error hover:text-error/80">Cancelar pedido</button>
+                    </form>
+                </div>
             </div>
 
             <!-- Progreso del pedido (visual) -->

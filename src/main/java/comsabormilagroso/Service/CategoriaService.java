@@ -40,8 +40,17 @@ public class CategoriaService {
         return categoriaRepository.save(categoria);
     }
 
-    public void eliminar(Long id) {
+    /*
+       Elimina la categoría. Devuelve false (y no elimina nada) si todavía
+       tiene productos asociados; en ese caso conviene desactivarla o mover
+       sus productos antes de borrarla.
+     */
+    public boolean eliminar(Long id) {
+        if (productoRepository.countByCategoriaId(id) > 0) {
+            return false;
+        }
         categoriaRepository.deleteById(id);
+        return true;
     }
 
     private CategoriaAdminDTO toDTO(Categoria c) {

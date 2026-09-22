@@ -12,6 +12,7 @@
     <main class="p-6 md:p-10 max-w-5xl mx-auto space-y-8">
         <div class="flex flex-wrap items-center justify-between gap-4">
             <h1 class="hidden lg:block font-headline-lg text-headline-lg text-on-surface">Categorías</h1>
+        <div th:if="${error}" class="bg-red-50 border border-red-200 text-red-700 font-body-md text-body-md px-4 py-3 rounded-lg" th:text="${error}">Error</div>
             <form th:action="@{/admin/categorias/guardar}" method="post" class="flex items-center gap-2 w-full lg:w-auto">
                 <input type="text" name="nombre" required="required" placeholder="Nombre de la categoría" class="flex-grow lg:w-56 px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md"/>
                 <button type="submit" class="inline-flex items-center gap-2 bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-full hover:bg-hover-orange transition-colors duration-300">

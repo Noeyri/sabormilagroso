@@ -95,6 +95,7 @@ public class ClienteController {
         @SuppressWarnings("unchecked")
         List<ItemPedidoDTO> carrito = (List<ItemPedidoDTO>) session.getAttribute("carrito");
         model.addAttribute("items", carrito == null ? List.of() : carrito);
+        model.addAttribute("costoEnvioDelivery", pedidoService.costoEnvio("DELIVERY"));
         Usuario u = obtenerUsuario(auth);
         if (u != null) {
             model.addAttribute("direcciones", direccionService.obtenerDeUsuario(u.getId()));
@@ -106,16 +107,34 @@ public class ClienteController {
     public String confirmarPedido(@RequestParam String metodoPago,
                                   @RequestParam String tipoEnvio,
                                   @RequestParam(required = false) String direccionEnvio,
-                                  Authentication auth, HttpSession session) {
+                                  Authentication auth, HttpSession session,
+                                  org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         @SuppressWarnings("unchecked")
         List<ItemPedidoDTO> carrito = (List<ItemPedidoDTO>) session.getAttribute("carrito");
         if (carrito == null || carrito.isEmpty()) {
             return "redirect:/cliente/checkout";
         }
         Usuario u = obtenerUsuario(auth);
-        var pedido = pedidoService.crearPedido(carrito, u, metodoPago, tipoEnvio, direccionEnvio);
-        carrito.clear();
-        return "redirect:/cliente/pedido-confirmado?id=" + pedido.getId();
+        try {
+            var pedido = pedidoService.crearPedido(carrito, u, metodoPago, tipoEnvio, direccionEnvio);
+            carrito.clear();
+            return "redirect:/cliente/pedido-confirmado?id=" + pedido.getId();
+        } catch (comsabormilagroso.Service.StockInsuficienteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/cliente/checkout";
+        }
+    }
+
+    @PostMapping("/pedidos/{id}/cancelar")
+    public String cancelarPedido(@PathVariable Long id, Authentication auth,
+                                 org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        Usuario u = obtenerUsuario(auth);
+        if (u == null) return "redirect:/login";
+        String error = pedidoService.cancelarComoCliente(id, u.getId());
+        if (error != null) {
+            redirectAttributes.addFlashAttribute("error", error);
+        }
+        return "redirect:/cliente/pedidos/" + id;
     }
 
     @GetMapping("/pedido-confirmado")

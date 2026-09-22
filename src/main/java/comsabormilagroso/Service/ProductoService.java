@@ -2,6 +2,7 @@ package comsabormilagroso.Service;
 
 import comsabormilagroso.Entity.Categoria;
 import comsabormilagroso.Entity.Producto;
+import comsabormilagroso.Repository.ItemPedidoRepository;
 import comsabormilagroso.Repository.ProductoRepository;
 import comsabormilagroso.dto.ProductoDTO;
 import org.springframework.stereotype.Service;
@@ -14,9 +15,11 @@ import java.util.Optional;
 public class ProductoService {
 
     private final ProductoRepository productoRepository;
+    private final ItemPedidoRepository itemPedidoRepository;
 
-    public ProductoService(ProductoRepository productoRepository) {
+    public ProductoService(ProductoRepository productoRepository, ItemPedidoRepository itemPedidoRepository) {
         this.productoRepository = productoRepository;
+        this.itemPedidoRepository = itemPedidoRepository;
     }
 
     public List<ProductoDTO> obtenerTodos() {
@@ -53,8 +56,23 @@ public class ProductoService {
         return productoRepository.save(producto);
     }
 
-    public void eliminar(Long id) {
+    /*
+       Elimina el producto. Devuelve false (y no elimina nada) si el producto
+       ya aparece en algún pedido, para no romper el historial de ventas.
+       En ese caso conviene desactivarlo en vez de borrarlo.
+     */
+    public boolean eliminar(Long id) {
+        if (itemPedidoRepository.existsByProductoId(id)) {
+            return false;
+        }
         productoRepository.deleteById(id);
+        return true;
+    }
+
+    public boolean hayStockDisponible(Long productoId, int cantidadRequerida) {
+        return productoRepository.findById(productoId)
+                .map(p -> p.getStock() != null && p.getStock() >= cantidadRequerida)
+                .orElse(false);
     }
 
     public List<Producto> obtenerEntidades() {
