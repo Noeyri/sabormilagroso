@@ -27,6 +27,22 @@
 
         <!-- Acciones -->
         <div class="flex items-center space-x-1 md:space-x-2">
+            <button type="button" class="theme-toggle" data-theme-toggle aria-label="Cambiar a modo oscuro" aria-pressed="false">
+                <span class="theme-toggle-sky theme-toggle-sky-day"></span>
+                <span class="theme-toggle-sky theme-toggle-sky-night"></span>
+                <span class="theme-toggle-star" style="top:6px;left:10px;"></span>
+                <span class="theme-toggle-star" style="top:16px;left:16px;"></span>
+                <span class="theme-toggle-star" style="top:9px;left:24px;"></span>
+                <span class="theme-toggle-star" style="top:20px;left:8px;"></span>
+                <span class="theme-toggle-cloud theme-toggle-cloud-a"></span>
+                <span class="theme-toggle-cloud theme-toggle-cloud-b"></span>
+                <span class="theme-toggle-thumb">
+                    <span class="theme-toggle-crater" style="top:5px;left:6px;width:5px;height:5px;"></span>
+                    <span class="theme-toggle-crater" style="top:14px;left:10px;width:3px;height:3px;"></span>
+                    <span class="theme-toggle-crater" style="top:9px;left:16px;width:4px;height:4px;"></span>
+                </span>
+            </button>
+
             <a th:unless="${usuarioAutenticado}" th:href="@{/login}" class="hidden md:block font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors px-3 py-2">Iniciar sesión</a>
 
             <a th:if="${usuarioAutenticado}" th:href="${esAdmin} ? @{/admin} : @{/cliente}" aria-label="Mi panel"
@@ -61,6 +77,24 @@
         <a th:href="@{/nosotros}" class="block font-label-md text-label-md text-on-surface-variant hover:text-primary py-2">Nosotros</a>
         <a th:href="@{/contacto}" class="block font-label-md text-label-md text-on-surface-variant hover:text-primary py-2">Contacto</a>
         <hr class="border-outline-variant"/>
+        <div class="flex items-center justify-between py-2">
+            <span class="font-label-md text-label-md text-on-surface-variant">Modo oscuro</span>
+            <button type="button" class="theme-toggle" data-theme-toggle aria-label="Cambiar a modo oscuro" aria-pressed="false">
+                <span class="theme-toggle-sky theme-toggle-sky-day"></span>
+                <span class="theme-toggle-sky theme-toggle-sky-night"></span>
+                <span class="theme-toggle-star" style="top:6px;left:10px;"></span>
+                <span class="theme-toggle-star" style="top:16px;left:16px;"></span>
+                <span class="theme-toggle-star" style="top:9px;left:24px;"></span>
+                <span class="theme-toggle-star" style="top:20px;left:8px;"></span>
+                <span class="theme-toggle-cloud theme-toggle-cloud-a"></span>
+                <span class="theme-toggle-cloud theme-toggle-cloud-b"></span>
+                <span class="theme-toggle-thumb">
+                    <span class="theme-toggle-crater" style="top:5px;left:6px;width:5px;height:5px;"></span>
+                    <span class="theme-toggle-crater" style="top:14px;left:10px;width:3px;height:3px;"></span>
+                    <span class="theme-toggle-crater" style="top:9px;left:16px;width:4px;height:4px;"></span>
+                </span>
+            </button>
+        </div>
         <a th:if="${usuarioAutenticado}" th:href="${esAdmin} ? @{/admin} : @{/cliente}" class="flex items-center gap-2 font-label-md text-label-md text-on-surface-variant hover:text-primary py-2">
             <span class="material-symbols-outlined text-[20px]">space_dashboard</span> Mi panel
         </a>

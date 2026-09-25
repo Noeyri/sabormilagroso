@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:fragment="head(titulo)">
+    <!-- Aplica el modo oscuro antes de pintar la página, para evitar el parpadeo -->
+    <script>
+        (function () {
+            try {
+                var preferencia = localStorage.getItem('sabormilagroso-theme');
+                var prefiereOscuro = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (preferencia === 'dark' || (preferencia === null && prefiereOscuro)) {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {
+                /* almacenamiento no disponible, se ignora */
+            }
+        })();
+    </script>
+
     <meta charset="UTF-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title th:text="${titulo} + ' | Sabor Milagroso'">Sabor Milagroso</title>
@@ -22,6 +37,7 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}"/>
     <script th:src="@{/js/main.js}" defer="defer"></script>
     <script th:src="@{/js/favoritos.js}" defer="defer"></script>
+    <script th:src="@{/js/theme.js}" defer="defer"></script>
 </head>
 <body>
 </body>

@@ -63,6 +63,24 @@
     </nav>
 
     <div class="px-4 py-6 border-t border-white/10 space-y-1">
+        <div class="flex items-center justify-between px-4 py-3">
+            <span class="font-label-md text-label-md text-white/70">Modo oscuro</span>
+            <button type="button" class="theme-toggle" data-theme-toggle aria-label="Cambiar a modo oscuro" aria-pressed="false">
+                <span class="theme-toggle-sky theme-toggle-sky-day"></span>
+                <span class="theme-toggle-sky theme-toggle-sky-night"></span>
+                <span class="theme-toggle-star" style="top:6px;left:10px;"></span>
+                <span class="theme-toggle-star" style="top:16px;left:16px;"></span>
+                <span class="theme-toggle-star" style="top:9px;left:24px;"></span>
+                <span class="theme-toggle-star" style="top:20px;left:8px;"></span>
+                <span class="theme-toggle-cloud theme-toggle-cloud-a"></span>
+                <span class="theme-toggle-cloud theme-toggle-cloud-b"></span>
+                <span class="theme-toggle-thumb">
+                    <span class="theme-toggle-crater" style="top:5px;left:6px;width:5px;height:5px;"></span>
+                    <span class="theme-toggle-crater" style="top:14px;left:10px;width:3px;height:3px;"></span>
+                    <span class="theme-toggle-crater" style="top:9px;left:16px;width:4px;height:4px;"></span>
+                </span>
+            </button>
+        </div>
         <a th:href="@{/}" class="flex items-center gap-3 px-4 py-3 rounded-lg font-label-md text-label-md text-white/70 hover:bg-white/5 hover:text-white transition-colors">
             <span class="material-symbols-outlined text-[20px]">storefront</span> Ver tienda
         </a>
@@ -98,6 +116,24 @@
     <a th:href="@{/admin/configuracion}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-white/80 hover:bg-white/10">Configuración</a>
     <a th:href="@{/admin/perfil}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-white/80 hover:bg-white/10">Mi perfil</a>
     <hr class="border-white/10"/>
+    <div class="flex items-center justify-between px-4 py-3">
+        <span class="font-label-md text-label-md text-white/80">Modo oscuro</span>
+        <button type="button" class="theme-toggle" data-theme-toggle aria-label="Cambiar a modo oscuro" aria-pressed="false">
+            <span class="theme-toggle-sky theme-toggle-sky-day"></span>
+            <span class="theme-toggle-sky theme-toggle-sky-night"></span>
+            <span class="theme-toggle-star" style="top:6px;left:10px;"></span>
+            <span class="theme-toggle-star" style="top:16px;left:16px;"></span>
+            <span class="theme-toggle-star" style="top:9px;left:24px;"></span>
+            <span class="theme-toggle-star" style="top:20px;left:8px;"></span>
+            <span class="theme-toggle-cloud theme-toggle-cloud-a"></span>
+            <span class="theme-toggle-cloud theme-toggle-cloud-b"></span>
+            <span class="theme-toggle-thumb">
+                <span class="theme-toggle-crater" style="top:5px;left:6px;width:5px;height:5px;"></span>
+                <span class="theme-toggle-crater" style="top:14px;left:10px;width:3px;height:3px;"></span>
+                <span class="theme-toggle-crater" style="top:9px;left:16px;width:4px;height:4px;"></span>
+            </span>
+        </button>
+    </div>
     <a th:href="@{/}" class="block px-4 py-3 rounded-lg font-label-md text-label-md text-white/80 hover:bg-white/10">Ver tienda</a>
     <form th:action="@{/logout}" method="post" class="px-4 py-3">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
